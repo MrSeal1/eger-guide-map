@@ -23,15 +23,13 @@ class _MapPageState extends State<MapPage> {
   static const _egriVarCoords = LatLng(47.90459653061823, 20.379886214144268);
   static const _agriaParkCoords = LatLng(47.89939989199328, 20.36884744635898);
 
-
-  LatLng? _currentLocation = _useActualLocation 
-                              ? null 
-                              : _agriaParkCoords;
+  LatLng? _currentLocation = _useActualLocation ? null : _agriaParkCoords;
 
   @override
   void initState() {
     super.initState();
-    if(!_useActualLocation) {
+
+    if (_useActualLocation) {
       getUserLocationUpdates();
     }
   }
@@ -41,29 +39,33 @@ class _MapPageState extends State<MapPage> {
     return Scaffold(
       body: _currentLocation == null
           ? Center(child: Text("Loading..."))
-          : GoogleMap(
-              onMapCreated: (GoogleMapController controller) =>
-                  _mapController.complete(controller),
-              initialCameraPosition: CameraPosition(
-                target: _egerCoords,
-                zoom: 13,
+          : SafeArea(
+              child: GoogleMap(
+                onMapCreated: (GoogleMapController controller) =>
+                    _mapController.complete(controller),
+                initialCameraPosition: CameraPosition(
+                  target: _egerCoords,
+                  zoom: 13,
+                ),
+                markers: {
+                  Marker(
+                    markerId: MarkerId("_startingLocation"),
+                    icon: BitmapDescriptor.defaultMarker,
+                    position: _agriaParkCoords,
+                  ),
+                  Marker(
+                    markerId: MarkerId("_destinationLocation"),
+                    icon: BitmapDescriptor.defaultMarker,
+                    position: _egriVarCoords,
+                  ),
+                  Marker(
+                    markerId: MarkerId("_currentLocation"),
+                    icon: BitmapDescriptor.defaultMarker,
+                    position: _currentLocation!,
+                  ),
+                },
+                zoomControlsEnabled: false,
               ),
-              markers: {
-                Marker(markerId: MarkerId("_startingLocation"),
-                icon: BitmapDescriptor.defaultMarker,
-                position: _agriaParkCoords
-                ),
-                Marker(
-                  markerId: MarkerId("_destinationLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _egriVarCoords,
-                ),
-                Marker(
-                  markerId: MarkerId("_currentLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _currentLocation!,
-                ),
-              },
             ),
     );
   }
@@ -78,37 +80,29 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> getUserLocationUpdates() async {
-    bool isLocationServiceEnabled;
-    PermissionStatus _permission;
-
-    isLocationServiceEnabled = await _locationController.serviceEnabled();
-    if (isLocationServiceEnabled) {
+    bool isLocationServiceEnabled = await _locationController.serviceEnabled();
+    if (!isLocationServiceEnabled) {
       isLocationServiceEnabled = await _locationController.requestService();
-    } else {
-      return;
+      if (!isLocationServiceEnabled) return;
     }
 
-    _permission = await _locationController.hasPermission();
-    if (_permission == PermissionStatus.denied) {
-      _permission = await _locationController.requestPermission();
-    }
-
-    if (_permission != PermissionStatus.granted) {
+    PermissionStatus permission = await _locationController.hasPermission();
+    if (permission == PermissionStatus.denied) {
+      permission = await _locationController.requestPermission();
+      if (permission != PermissionStatus.granted) return;
+    } else if (permission != PermissionStatus.granted) {
       return;
     }
 
     _locationController.onLocationChanged.listen((
       LocationData currentLocation,
     ) {
-      if (currentLocation.latitude != null &&
-          currentLocation.longitude != null) {
+      final lat = currentLocation.latitude;
+      final lng = currentLocation.longitude;
+      if (lat != null && lng != null) {
         setState(() {
-          _currentLocation = LatLng(
-            currentLocation.latitude!,
-            currentLocation.longitude!,
-          );
-
-          print(_currentLocation);
+          _currentLocation = LatLng(lat, lng);
+          debugPrint('Current location: $_currentLocation');
         });
       }
     });
