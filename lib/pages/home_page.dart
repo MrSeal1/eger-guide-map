@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1; // térképen kezd
 
   final List<Widget> _pages = const [
     ProfilePageWidget(),

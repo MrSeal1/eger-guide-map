@@ -37,7 +37,7 @@ class ProfilePageWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: Color(0xf1f4f8ff),//theme.colorScheme.background,
+        backgroundColor: Color(0xf1f4f8ff), //theme.colorScheme.background,
         body: SafeArea(
           top: true,
           child: Column(
