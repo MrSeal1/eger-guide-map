@@ -32,7 +32,6 @@ class Poi {
   });
 
   factory Poi.fromJson(Map<String, dynamic> json) {
-    // Support both a flattened POI JSON and Google Places-like structure
     String id = json['place_id'] ?? json['id'] ?? '';
     String name = json['name'] ?? '';
 
