@@ -7,7 +7,6 @@ class PoiProvider extends ChangeNotifier {
 
   List<Poi> _allPois = [];
   bool _isLoading = false;
-
   String _selectedCategory = 'all';
 
   bool get isLoading => _isLoading;
@@ -23,9 +22,15 @@ class PoiProvider extends ChangeNotifier {
     }).toList();
   }
 
+  List<Poi> get favoritePois {
+    return _allPois.where((poi) => poi.isFavorite).toList();
+  }
+
+
   PoiProvider(this._repository) {
     loadPois();
   }
+  
 
   Future<void> loadPois() async {
     _isLoading = true;
@@ -45,4 +50,36 @@ class PoiProvider extends ChangeNotifier {
     _selectedCategory = cat;
     notifyListeners();
   }
+
+  void toggleFavorite(String placeId) {
+    final index = _allPois.indexWhere((p) => p.placeId == placeId);
+
+    if(index != -1) {
+      final oldPoi = _allPois[index];
+
+      // mivel final az _allPois, kicseréljük a 'régit' egy újjal, csak a favorite megcserélve
+      final newPoi = Poi(
+        placeId: oldPoi.placeId,
+        name: oldPoi.name,
+        lat: oldPoi.lat,
+        lng: oldPoi.lng,
+        description: oldPoi.description,
+        address: oldPoi.address,
+        types: oldPoi.types,
+        rating: oldPoi.rating,
+        userRatingsTotal: oldPoi.userRatingsTotal,
+        openNow: oldPoi.openNow,
+        photoReferences: oldPoi.photoReferences,
+        website: oldPoi.website,
+        phoneNumber: oldPoi.phoneNumber,
+        isFavorite: !oldPoi.isFavorite,
+      );
+
+      _allPois[index] = newPoi;
+
+      notifyListeners();
+    }
+  }
+
+  
 }
