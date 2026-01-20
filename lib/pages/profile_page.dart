@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/pages/favorites_page.dart';
 
 class ProfilePageWidget extends StatelessWidget {
   const ProfilePageWidget({super.key});
@@ -7,149 +8,132 @@ class ProfilePageWidget extends StatelessWidget {
   static const String routePath = '/profilePage';
 
   Widget _buildCard(BuildContext context, List<Widget> children) {
-    final width = MediaQuery.of(context).size.width * 0.9;
-    final theme = Theme.of(context);
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
-      child: Container(
-        width: width,
-        decoration: BoxDecoration(
-          color: Color(0xffffffff),
-          borderRadius: BorderRadius.circular(28),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 22),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: children,
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: children,
         ),
       ),
     );
   }
 
+  Widget _buildProfileItem(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.green.shade100,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(icon, color: Colors.green.shade800, size: 24),
+      ),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.grey),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final titleStyle = theme.textTheme.titleLarge;
-
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Color(0xf1f4f8ff), //theme.colorScheme.background,
-        body: SafeArea(
-          top: true,
+    return Scaffold(
+      backgroundColor: const Color(0xfff5f5f5),
+      body: SingleChildScrollView(
+        child: SafeArea(
           child: Column(
-            mainAxisSize: MainAxisSize.max,
             children: [
-              const SizedBox(height: 8),
-              Align(
-                alignment: AlignmentDirectional(0, -1),
+              const SizedBox(height: 30),
+              
+              Center(
                 child: Container(
-                  width: 150,
-                  height: 150,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: Image.network(
-                    'https://picsum.photos/seed/900/600',
-                    fit: BoxFit.cover,
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: const DecorationImage(
+                      image: NetworkImage('https://picsum.photos/seed/900/600'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 48),
-                  child: _buildCard(context, [
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.favorite_border),
-                              title: Text('Kedvenc helyeim', style: titleStyle),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded,
-                                  color: theme.textTheme.bodySmall?.color, size: 24),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.star_border),
-                              title: Text('Értékeléseim', style: titleStyle),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded,
-                                  color: theme.textTheme.bodySmall?.color, size: 24),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
+              
+              const SizedBox(height: 30),
+
+              // 2. Fiók Kártya
+              _buildCard(context, [
+                _buildProfileItem(
+                  context,
+                  icon: Icons.favorite,
+                  title: 'Kedvenc helyeim',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const FavoritesPage()),
+                    );
+                  },
                 ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: _buildCard(context, [
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.settings_outlined),
-                              title: Text('Beállítások', style: titleStyle),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded,
-                                  color: theme.textTheme.bodySmall?.color, size: 24),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.download_outlined),
-                              title: Text('Helyi adatok letöltése', style: titleStyle),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded,
-                                  color: theme.textTheme.bodySmall?.color, size: 24),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
+                Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
+                _buildProfileItem(
+                  context,
+                  icon: Icons.star,
+                  title: 'Értékeléseim',
+                  onTap: () {
+                    // TODO: Értékelések oldal
+                  },
                 ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24),
-                  child: _buildCard(context, [
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          children: [
-                            ListTile(
-                              title: Text('Az alkalmazásról', style: titleStyle),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded,
-                                  color: theme.textTheme.bodySmall?.color, size: 24),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ]),
+              ]),
+
+              _buildCard(context, [
+                _buildProfileItem(
+                  context,
+                  icon: Icons.settings,
+                  title: 'Beállítások',
+                  onTap: () {},
                 ),
-              ),
+                Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
+                _buildProfileItem(
+                  context,
+                  icon: Icons.download,
+                  title: 'Helyi adatok letöltése',
+                  onTap: () {},
+                ),
+                Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
+                _buildProfileItem(
+                  context,
+                  icon: Icons.info_outline,
+                  title: 'Az alkalmazásról',
+                  onTap: () {},
+                ),
+              ]),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),
