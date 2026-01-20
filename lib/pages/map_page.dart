@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_testing/pages/widgets/filter_widget.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,13 @@ class _MapPageState extends State<MapPage> {
       CameraUpdate.newCameraPosition(
         const CameraPosition(target: _center, zoom: 13.0),
       ),
+    );
+
+    rootBundle.loadString('assets/maps_theme.json').then((String style) {
+      controller.setMapStyle(style);
+    }).catchError((err) {
+      debugPrint('Hiba a stílus betöltésekor: $err');
+    }
     );
   }
 

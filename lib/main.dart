@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/data/repositories/google_places_repository.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'data/repositories/mock_poi_repository.dart';
 import 'logic/poi_provider.dart';
 import 'pages/home_page.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+
+  await dotenv.load(fileName: '.env');
 }
 
 class MyApp extends StatelessWidget {
@@ -13,7 +17,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final poiRepository = MockPoiRepository();
+    //final poiRepository = MockPoiRepository();
+    final poiRepository = GooglePlacesRepository(
+      apiKey: dotenv.env['MAPS_API_KEY'] ?? ''
+    );
 
     return MultiProvider(
       providers: [

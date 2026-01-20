@@ -32,12 +32,15 @@ class PoiProvider extends ChangeNotifier {
   }
   
 
-  Future<void> loadPois() async {
+  Future<void> loadPois(double? lat, double? lng) async {
     _isLoading = true;
     notifyListeners();
 
+    final targetLat = lat ?? 47.9025;
+    final targetLng = lng ?? 20.3772;
+
     try {
-      _allPois = await _repository.getPois();
+      _allPois = await _repository.getPois(lat: targetLat, lng: targetLng);
     } catch (e) {
       debugPrint("Hiba történt: $e");
     } finally {
