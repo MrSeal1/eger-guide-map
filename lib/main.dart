@@ -6,7 +6,7 @@ import 'data/repositories/mock_poi_repository.dart';
 import 'logic/poi_provider.dart';
 import 'pages/home_page.dart';
 
-void main() async {  
+void main() async {
   await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }

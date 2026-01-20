@@ -16,6 +16,24 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
+  String? _mapStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMapStyle();
+  }
+
+  void _loadMapStyle() {
+    rootBundle.loadString('assets/maps_theme.json').then((String styleString) {
+      setState(() {        
+      _mapStyle = styleString;
+      });
+    }).catchError((err) {
+      debugPrint('Hiba a stílus beolvasásakor: $err');
+    });
+  }
+
   static const LatLng _center = LatLng(47.9025, 20.3772);
   static final LatLngBounds _egerBounds = LatLngBounds(
     southwest: const LatLng(47.8600, 20.3200),
@@ -28,13 +46,6 @@ class _MapPageState extends State<MapPage> {
       CameraUpdate.newCameraPosition(
         const CameraPosition(target: _center, zoom: 13.0),
       ),
-    );
-
-    rootBundle.loadString('assets/maps_theme.json').then((String style) {
-      controller.setMapStyle(style);
-    }).catchError((err) {
-      debugPrint('Hiba a stílus betöltésekor: $err');
-    }
     );
   }
 
@@ -54,7 +65,6 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     final poiProvider = context.watch<PoiProvider>();
-
     return Scaffold(
       body: poiProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -66,6 +76,7 @@ class _MapPageState extends State<MapPage> {
                     target: _center,
                     zoom: 13.0,
                   ),
+                  style: _mapStyle,
                   //cameraTargetBounds: CameraTargetBounds(_egerBounds),
                   cameraTargetBounds: CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
                   minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),

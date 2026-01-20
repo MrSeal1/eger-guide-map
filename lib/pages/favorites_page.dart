@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
-import 'package:maps_testing/pages/poi_details_page.dart';
 import 'package:maps_testing/pages/widgets/poi_list_item_widget.dart';
 import 'package:provider/provider.dart';
 
