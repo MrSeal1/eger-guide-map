@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:provider/provider.dart';
 import '../data/models/poi.dart';
 
 class PoiDetailsPage extends StatelessWidget {
@@ -9,24 +11,39 @@ class PoiDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Az AppBar átlátszóvá tétele, hogy a kép felcsússzon mögé (opcionális design elem)
       appBar: AppBar(
         title: Text(poi.name),
+        actions: [
+          Consumer<PoiProvider>(
+            builder: (context, provider, child) {
+            final currentpoi = provider.filteredPois.firstWhere(
+              (p) => p.placeId == poi.placeId
+            );
+            final isFavorite = currentpoi.isFavorite;
+
+            return IconButton(
+              icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+              onPressed: () {
+                provider.toggleFavorite(poi.placeId);
+              },
+            );
+            
+            },
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. KÉP (Hero animációval)
             Hero(
-              tag: poi.placeId, // Ez köti össze a listával
+              tag: poi.placeId,
               child: Container(
                 height: 250,
                 width: double.infinity,
-                color: Colors.grey.shade300, // Helykitöltő szín
+                color: Colors.grey.shade300, 
                 child: poi.photoReferences != null && poi.photoReferences!.isNotEmpty
                     ? Image.network(
-                        // Itt majd a valódi fotó URL-je lesz, most placeholder
                         'https://picsum.photos/seed/${poi.placeId}/800/400',
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
@@ -41,7 +58,6 @@ class PoiDetailsPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 2. CÍM és ÉRTÉKELÉS
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -78,7 +94,6 @@ class PoiDetailsPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // 3. CÍM (Address)
                   if (poi.address != null)
                     Row(
                       children: [
@@ -95,7 +110,6 @@ class PoiDetailsPage extends StatelessWidget {
                   
                   const Divider(height: 32),
 
-                  // 4. LEÍRÁS
                   Text(
                     "Leírás",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -110,7 +124,6 @@ class PoiDetailsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // 5. GOMBOK (Navigáció indítása - később kötjük be)
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
