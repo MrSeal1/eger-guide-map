@@ -30,6 +30,19 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
+  // kategóriától függően más-más színt ad vissza
+  double _getMarkerColor(List<String>? types) {
+    if(types == null || types.isEmpty) return BitmapDescriptor.hueRed;
+
+    if(types.contains('castle')) return BitmapDescriptor.hueMagenta;
+
+    if(types.contains('shopping_mall') || types.contains('store') || types.contains('shopping')) return BitmapDescriptor.hueBlue;
+
+    if(types.contains('restaurant')) return BitmapDescriptor.hueYellow;
+
+    return BitmapDescriptor.hueGreen;
+  }
+
   @override
   Widget build(BuildContext context) {
     final poiProvider = context.watch<PoiProvider>();
@@ -54,6 +67,9 @@ class _MapPageState extends State<MapPage> {
                     return Marker(
                       markerId: MarkerId(poi.placeId),
                       position: LatLng(poi.lat, poi.lng),
+                      icon: BitmapDescriptor.defaultMarkerWithHue(
+                        _getMarkerColor(poi.types)
+                      ),
                       infoWindow: InfoWindow(
                         title: poi.name,
                         snippet: poi.types?.first ?? '',
