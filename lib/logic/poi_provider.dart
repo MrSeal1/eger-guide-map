@@ -32,7 +32,7 @@ class PoiProvider extends ChangeNotifier {
   }
   
 
-  Future<void> loadPois(double? lat, double? lng) async {
+  Future<void> loadPois({double? lat, double? lng}) async {
     _isLoading = true;
     notifyListeners();
 
