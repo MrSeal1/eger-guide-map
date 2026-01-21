@@ -36,6 +36,7 @@ class PoiProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    // alapból kb Eger közepéről olvas
     final targetLat = lat ?? 47.9025;
     final targetLng = lng ?? 20.3772;
 

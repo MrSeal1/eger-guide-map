@@ -57,15 +57,27 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _onCameraMove(CameraPosition position) {
-    // TODO
+    _currentCameraPos = position;
   }
 
   void _onCameraIdle() {
-    // TODO
+    setState(() {
+      _showSearchButton = true;
+    });
   }
 
   void _searchArea() {
-    // TODO
+    setState(() {
+      _showSearchButton = false;
+    });
+
+    final searchTarget = _currentCameraPos.target;
+    _lastSearchedPos = searchTarget;
+
+    context.read<PoiProvider>().loadPois(
+      lat: searchTarget.latitude,
+      lng: searchTarget.longitude,
+    );
   }
 
   // kategóriától függően más-más színt ad vissza
@@ -87,82 +99,85 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     final poiProvider = context.watch<PoiProvider>();
-    return Scaffold(
-      body: poiProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                // térkép
-                GoogleMap(
-                  onMapCreated: _onMapCreated,
-                  onCameraMove: _onCameraMove,
-                  onCameraIdle: _onCameraIdle,
-                  initialCameraPosition: _currentCameraPos,
-                  style: _mapStyle,
-                  //cameraTargetBounds: CameraTargetBounds(_egerBounds),
-                  cameraTargetBounds: CameraTargetBounds
-                      .unbounded, // ideiglenes, tesztelésre csak
-                  minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                  markers: poiProvider.filteredPois.map((poi) {
-                    return Marker(
-                      markerId: MarkerId(poi.placeId),
-                      position: LatLng(poi.lat, poi.lng),
-                      icon: BitmapDescriptor.defaultMarkerWithHue(
-                        _getMarkerColor(poi.types),
-                      ),
-                      infoWindow: InfoWindow(
-                        title: poi.name,
-                        snippet: poi.types?.first ?? '',
-                      ),
-                    );
-                  }).toSet(),
-                ),
 
-                // filterek
-                SafeArea(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: const FilterWidget(),
-                    ),
-                  ),
+    return Stack(
+        children: [
+        
+          // térkép
+          GoogleMap(
+            onMapCreated: _onMapCreated,
+            onCameraMove: _onCameraMove,
+            onCameraIdle: _onCameraIdle,
+            initialCameraPosition: _currentCameraPos,
+            style: _mapStyle,
+            //cameraTargetBounds: CameraTargetBounds(_egerBounds),
+            cameraTargetBounds:
+                CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
+            minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
+            markers: poiProvider.filteredPois.map((poi) {
+              return Marker(
+                markerId: MarkerId(poi.placeId),
+                position: LatLng(poi.lat, poi.lng),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  _getMarkerColor(poi.types),
                 ),
+                infoWindow: InfoWindow(
+                  title: poi.name,
+                  snippet: poi.types?.first ?? '',
+                ),
+              );
+            }).toSet(),
+          ),
 
-                // kereső gomb
-                if (_showSearchButton)
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: SafeArea(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 60),
-                        child: GestureDetector(
-                          onTap: _searchArea,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Text(
-                              'Keresés itt',
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+          // filterek
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: const FilterWidget(),
+              ),
+            ),
+          ),
+
+          // kereső gomb
+          if (_showSearchButton)
+            Align(
+              alignment: Alignment.topCenter,
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 60),
+                  child: GestureDetector(
+                    onTap: _searchArea,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'Keresés itt',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-              ],
+                ),
+              ),
             ),
+
+            if(poiProvider.isLoading)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
     );
   }
 }
