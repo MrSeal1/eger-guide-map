@@ -11,10 +11,10 @@ class GooglePlacesRepository implements PoiRepository {
   GooglePlacesRepository({required this.apiKey});
 
   @override
-  Future<List<Poi>> getPois({required double lat, required double lng}) async {
+  Future<List<Poi>> getPois({required double lat, required double lng, required int radius}) async {
     //const egerLat = 47.9025;
     //const egerLng = 20.3772;
-    const radius = 2000; // 2km körzet
+    //const radius = 2000; // 2km körzet
 
     final placesUrl = Uri.parse('https://places.googleapis.com/v1/places:searchNearby');
     final headers = {
@@ -41,7 +41,7 @@ class GooglePlacesRepository implements PoiRepository {
               "latitude": lat,
               "longitude": lng
             },
-            "radius": radius
+            "radius": radius.toDouble()
           }
         },
         "languageCode": "hu"
