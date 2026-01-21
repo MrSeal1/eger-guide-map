@@ -51,7 +51,8 @@ class PoiDetailsPage extends StatelessWidget {
                 width: double.infinity,
                 color: Colors.grey.shade300,
                 child:
-                    poi.photoReferences != null && poi.photoReferences!.isNotEmpty
+                    poi.photoReferences != null &&
+                        poi.photoReferences!.isNotEmpty
                     ? Image.network(
                         _getPhotoUrlString(poi.photoReferences!.first)!,
                         fit: BoxFit.cover,
@@ -112,12 +113,53 @@ class PoiDetailsPage extends StatelessWidget {
                   if (poi.address != null)
                     Row(
                       children: [
-                        const Icon(Icons.location_on, color: Colors.green),
+                        Icon(
+                          Icons.location_on,
+                          color: Theme.of(context).primaryColor,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             poi.address!,
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                  if (poi.website != null)
+                    Row(
+                      children: [
+                        Icon(Icons.link, color: Theme.of(context).primaryColor),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: GestureDetector(
+                            child: Text(
+                              poi.website!,
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColorDark,
+                                fontWeight: FontWeight.bold
+                              ),
+                              softWrap: true,
+                            ),
+                            onTap: () async {
+                              try {
+                                await launchUrl(
+                                  Uri.parse(poi.website!),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              } catch (_) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Nem sikerült megnyitni a weboldalt.",
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -154,7 +196,11 @@ class PoiDetailsPage extends StatelessWidget {
                           await launchUrl(googleMapsUrl);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Nem sikerült megnyitni a térképet."))
+                            SnackBar(
+                              content: Text(
+                                "Nem sikerült megnyitni a térképet.",
+                              ),
+                            ),
                           );
                         }
                       },

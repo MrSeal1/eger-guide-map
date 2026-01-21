@@ -21,7 +21,7 @@ class GooglePlacesRepository implements PoiRepository {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       // felsorolás, miket akarok lekérni
-      'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.displayName,places.types,places.photos,places.rating,places.userRatingCount'
+      'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.displayName,places.types,places.photos,places.rating,places.websiteUri,places.editorialSummary'
     };
     final includedTypes = [
       'tourist_attraction',
@@ -69,15 +69,14 @@ class GooglePlacesRepository implements PoiRepository {
             return Poi(
               placeId: place['id'], 
               name: place['displayName'] != null ? place['displayName']['text'] : 'Névtelen hely', 
+              description: place['editorialSummary'] != null ? place['editorialSummary']['text'] : null,
               lat: place['location']['latitude'], 
               lng: place['location']['longitude'],
               types: (place['types'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
               address: place['formattedAddress'],
+              website: place['websiteUri'] as String?,
               rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
               userRatingsTotal: (place['userRatingCount'] as num?)?.toInt() ?? 0,
-              // nem linket vagy igazi képet tartalmaz
-              // külön lekéréssel kell megszerezni a képet: 
-              // https://developers.google.com/maps/documentation/places/web-service/place-photos
               photoReferences: (place['photos'] as List<dynamic>?)?.map((p) => p['name'].toString()).toList(),
               );
           }).toList();

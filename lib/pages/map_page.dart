@@ -131,6 +131,7 @@ class _MapPageState extends State<MapPage> {
           myLocationButtonEnabled: true,
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
+          compassEnabled: false,
           markers: poiProvider.filteredPois.map((poi) {
             return Marker(
               markerId: MarkerId(poi.placeId),
