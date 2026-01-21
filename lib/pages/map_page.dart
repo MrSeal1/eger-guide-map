@@ -18,11 +18,13 @@ class _MapPageState extends State<MapPage> {
 
   String? _mapStyle;
 
-
   bool _showSearchButton = true;
   LatLng? _lastSearchedPos;
   // alapból Eger koordinátái, tesztelés miatt
-  CameraPosition _currentCameraPos = const CameraPosition(target: _center, zoom: 13);
+  CameraPosition _currentCameraPos = const CameraPosition(
+    target: _center,
+    zoom: 13,
+  );
 
   @override
   void initState() {
@@ -32,13 +34,16 @@ class _MapPageState extends State<MapPage> {
   }
 
   void _loadMapStyle() {
-    rootBundle.loadString('assets/maps_theme.json').then((String styleString) {
-      setState(() {        
-      _mapStyle = styleString;
-      });
-    }).catchError((err) {
-      debugPrint('Hiba a stílus beolvasásakor: $err');
-    });
+    rootBundle
+        .loadString('assets/maps_theme.json')
+        .then((String styleString) {
+          setState(() {
+            _mapStyle = styleString;
+          });
+        })
+        .catchError((err) {
+          debugPrint('Hiba a stílus beolvasásakor: $err');
+        });
   }
 
   static const LatLng _center = LatLng(47.9025, 20.3772);
@@ -53,7 +58,7 @@ class _MapPageState extends State<MapPage> {
 
   void _onCameraMove(CameraPosition position) {
     // TODO
-  }  
+  }
 
   void _onCameraIdle() {
     // TODO
@@ -65,13 +70,16 @@ class _MapPageState extends State<MapPage> {
 
   // kategóriától függően más-más színt ad vissza
   double _getMarkerColor(List<String>? types) {
-    if(types == null || types.isEmpty) return BitmapDescriptor.hueRed;
+    if (types == null || types.isEmpty) return BitmapDescriptor.hueRed;
 
-    if(types.contains('castle')) return BitmapDescriptor.hueMagenta;
+    if (types.contains('castle')) return BitmapDescriptor.hueMagenta;
 
-    if(types.contains('shopping_mall') || types.contains('store') || types.contains('shopping')) return BitmapDescriptor.hueBlue;
+    if (types.contains('shopping_mall') ||
+        types.contains('store') ||
+        types.contains('shopping'))
+      return BitmapDescriptor.hueBlue;
 
-    if(types.contains('restaurant')) return BitmapDescriptor.hueYellow;
+    if (types.contains('restaurant')) return BitmapDescriptor.hueYellow;
 
     return BitmapDescriptor.hueGreen;
   }
@@ -92,7 +100,8 @@ class _MapPageState extends State<MapPage> {
                   initialCameraPosition: _currentCameraPos,
                   style: _mapStyle,
                   //cameraTargetBounds: CameraTargetBounds(_egerBounds),
-                  cameraTargetBounds: CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
+                  cameraTargetBounds: CameraTargetBounds
+                      .unbounded, // ideiglenes, tesztelésre csak
                   minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
@@ -101,7 +110,7 @@ class _MapPageState extends State<MapPage> {
                       markerId: MarkerId(poi.placeId),
                       position: LatLng(poi.lat, poi.lng),
                       icon: BitmapDescriptor.defaultMarkerWithHue(
-                        _getMarkerColor(poi.types)
+                        _getMarkerColor(poi.types),
                       ),
                       infoWindow: InfoWindow(
                         title: poi.name,
@@ -118,42 +127,42 @@ class _MapPageState extends State<MapPage> {
                     child: Padding(
                       padding: EdgeInsets.only(top: 10),
                       child: const FilterWidget(),
-                      ),
+                    ),
                   ),
                 ),
 
                 // kereső gomb
-                if(_showSearchButton) Positioned(
-                    top: 100,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: _searchArea,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            
-                          ),
-                          child: Text(
-                            'Keresés itt',
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold
+                if (_showSearchButton)
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 60),
+                        child: GestureDetector(
+                          onTap: _searchArea,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 16,
                             ),
-                          )
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              'Keresés itt',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  )
-                
+                  ),
               ],
             ),
     );
   }
-
-
-
 }
