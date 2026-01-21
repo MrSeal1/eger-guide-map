@@ -16,6 +16,9 @@ class PoiProvider extends ChangeNotifier {
     if (_selectedCategory == 'all') {
       return _allPois;
     }
+    if(_selectedCategory == 'favorite') {
+      return _allPois.where((poi) => poi.isFavorite).toList();
+    }
 
     return _allPois.where((poi) {
       return poi.types != null && poi.types!.contains(_selectedCategory);

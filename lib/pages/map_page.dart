@@ -191,12 +191,13 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
 
+          // TODO: ahelyett hogy új oldalra vinne felnyíló menü widget animációval
           AnimatedPositioned(
-            duration: Duration(milliseconds: 250),
+            duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             left: 20,
             right: 20,
-            bottom: _selectedPoi != null ? 55 : -250,
+            bottom: _selectedPoi != null ? 25 : -250,
             child: _selectedPoi != null
               ? Container(
                 decoration: BoxDecoration(
