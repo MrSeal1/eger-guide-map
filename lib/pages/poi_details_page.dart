@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/models/poi.dart';
 
 class PoiDetailsPage extends StatelessWidget {
@@ -16,20 +17,19 @@ class PoiDetailsPage extends StatelessWidget {
         actions: [
           Consumer<PoiProvider>(
             builder: (context, provider, child) {
-            final currentpoi = provider.filteredPois.firstWhere(
-              (p) => p.placeId == poi.placeId
-            );
-            final isFavorite = currentpoi.isFavorite;
+              final currentpoi = provider.filteredPois.firstWhere(
+                (p) => p.placeId == poi.placeId,
+              );
+              final isFavorite = currentpoi.isFavorite;
 
-            return IconButton(
-              icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-              onPressed: () {
-                provider.toggleFavorite(poi.placeId);
-              },
-            );
-            
+              return IconButton(
+                icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                onPressed: () {
+                  provider.toggleFavorite(poi.placeId);
+                },
+              );
             },
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -41,8 +41,10 @@ class PoiDetailsPage extends StatelessWidget {
               child: Container(
                 height: 250,
                 width: double.infinity,
-                color: Colors.grey.shade300, 
-                child: poi.photoReferences != null && poi.photoReferences!.isNotEmpty
+                color: Colors.grey.shade300,
+                child:
+                    poi.photoReferences != null &&
+                        poi.photoReferences!.isNotEmpty
                     ? Image.network(
                         'https://picsum.photos/seed/${poi.placeId}/800/400',
                         fit: BoxFit.cover,
@@ -64,21 +66,27 @@ class PoiDetailsPage extends StatelessWidget {
                       Expanded(
                         child: Text(
                           poi.name,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
                       if (poi.rating != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.amber,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.star, size: 16, color: Colors.white),
+                              const Icon(
+                                Icons.star,
+                                size: 16,
+                                color: Colors.white,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 poi.rating.toString(),
@@ -107,14 +115,14 @@ class PoiDetailsPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                  
+
                   const Divider(height: 32),
 
                   Text(
                     "Leírás",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -127,10 +135,21 @@ class PoiDetailsPage extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Navigáció indítása... (Hamarosan)")),
+                      onPressed: () async {
+                        final targetLat = poi.lat;
+                        final targetLng = poi.lng;
+
+                        final googleMapsUrl = Uri.parse(
+                          "https://www.google.com/maps/dir/?api=1&destination=$targetLat,$targetLng",
                         );
+
+                        if (await canLaunchUrl(googleMapsUrl)) {
+                          await launchUrl(googleMapsUrl);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Nem sikerült megnyitni a térképet."))
+                          );
+                        }
                       },
                       icon: const Icon(Icons.directions),
                       label: const Text("Útvonaltervezés ide"),

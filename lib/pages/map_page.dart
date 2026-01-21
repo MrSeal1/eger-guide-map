@@ -130,6 +130,7 @@ class _MapPageState extends State<MapPage> {
           minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),
           myLocationButtonEnabled: true,
           zoomControlsEnabled: false,
+          mapToolbarEnabled: false,
           markers: poiProvider.filteredPois.map((poi) {
             return Marker(
               markerId: MarkerId(poi.placeId),
@@ -137,17 +138,11 @@ class _MapPageState extends State<MapPage> {
               icon: BitmapDescriptor.defaultMarkerWithHue(
                 _getMarkerColor(poi.types),
               ),
-              /* infoWindow: InfoWindow(
-                title: poi.name,
-                snippet: poi.types?.first ?? '',
-              ), */
               onTap: () {
                 setState(() {
-                  _selectedPoi = poi;                  
+                  _selectedPoi = poi;               
                 });
-
-              }
-                
+              }                
             );
           }).toSet(),
         ),
