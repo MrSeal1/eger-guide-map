@@ -103,6 +103,14 @@ class PoiDetailsPage extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
+                              if (poi.userRatingsTotal != null)
+                                Text(
+                                  " (${poi.userRatingsTotal})",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -140,7 +148,7 @@ class PoiDetailsPage extends StatelessWidget {
                               poi.website!,
                               style: TextStyle(
                                 color: Theme.of(context).primaryColorDark,
-                                fontWeight: FontWeight.bold
+                                fontWeight: FontWeight.bold,
                               ),
                               softWrap: true,
                             ),

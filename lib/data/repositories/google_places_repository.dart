@@ -21,9 +21,9 @@ class GooglePlacesRepository implements PoiRepository {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       // felsorolás, miket akarok lekérni
-      'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.displayName,places.types,places.photos,places.rating,places.websiteUri,places.editorialSummary'
+      'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.displayName,places.types,places.photos,places.rating,places.userRatingCount,places.websiteUri,places.editorialSummary'
     };
-    
+
     // TODO: közös neveket használni a google típusok és saját típusok között,
     // hogy a filterezés megbízhatóbban működjön
     // Map<String, List<String>> ?
