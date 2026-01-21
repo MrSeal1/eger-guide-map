@@ -23,6 +23,10 @@ class GooglePlacesRepository implements PoiRepository {
       // felsorolás, miket akarok lekérni
       'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.displayName,places.types,places.photos,places.rating,places.websiteUri,places.editorialSummary'
     };
+    
+    // TODO: közös neveket használni a google típusok és saját típusok között,
+    // hogy a filterezés megbízhatóbban működjön
+    // Map<String, List<String>> ?
     final includedTypes = [
       'tourist_attraction',
       'museum',

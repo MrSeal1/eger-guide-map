@@ -27,9 +27,7 @@ class PoiProvider extends ChangeNotifier {
   }
 
 
-  PoiProvider(this._repository) {
-    loadPois();
-  }
+  PoiProvider(this._repository);
   
 
   Future<void> loadPois({double? lat, double? lng, int radius = 2000}) async {

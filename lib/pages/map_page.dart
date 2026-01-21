@@ -23,13 +23,15 @@ class _MapPageState extends State<MapPage> {
 
   bool _showSearchButton = true;
   LatLng? _lastSearchedPos;
+
+  Poi? _selectedPoi;
+
   // alapból Eger koordinátái, tesztelés miatt
   CameraPosition _currentCameraPos = const CameraPosition(
     target: _center,
     zoom: 13,
   );
 
-  Poi? _selectedPoi;
 
   @override
   void initState() {
@@ -132,7 +134,10 @@ class _MapPageState extends State<MapPage> {
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
           compassEnabled: false,
+          onTap: (_) => _selectedPoi = null,
           markers: poiProvider.filteredPois.map((poi) {
+            // TODO: egyedi marker widget használata, hogy
+            // flexibilisebb legyen a méret, ikon, színezés
             return Marker(
               markerId: MarkerId(poi.placeId),
               position: LatLng(poi.lat, poi.lng),
