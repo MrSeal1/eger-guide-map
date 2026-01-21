@@ -18,10 +18,17 @@ class _MapPageState extends State<MapPage> {
 
   String? _mapStyle;
 
+
+  bool _showSearchButton = true;
+  LatLng? _lastSearchedPos;
+  // alapból Eger koordinátái, tesztelés miatt
+  CameraPosition _currentCameraPos = const CameraPosition(target: _center, zoom: 13);
+
   @override
   void initState() {
     super.initState();
     _loadMapStyle();
+    _lastSearchedPos = _center;
   }
 
   void _loadMapStyle() {
@@ -42,11 +49,18 @@ class _MapPageState extends State<MapPage> {
 
   void _onMapCreated(GoogleMapController controller) {
     _controller.complete(controller);
-    controller.moveCamera(
-      CameraUpdate.newCameraPosition(
-        const CameraPosition(target: _center, zoom: 13.0),
-      ),
-    );
+  }
+
+  void _onCameraMove(CameraPosition position) {
+    // TODO
+  }  
+
+  void _onCameraIdle() {
+    // TODO
+  }
+
+  void _searchArea() {
+    // TODO
   }
 
   // kategóriától függően más-más színt ad vissza
@@ -70,12 +84,12 @@ class _MapPageState extends State<MapPage> {
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
+                // térkép
                 GoogleMap(
                   onMapCreated: _onMapCreated,
-                  initialCameraPosition: const CameraPosition(
-                    target: _center,
-                    zoom: 13.0,
-                  ),
+                  onCameraMove: _onCameraMove,
+                  onCameraIdle: _onCameraIdle,
+                  initialCameraPosition: _currentCameraPos,
                   style: _mapStyle,
                   //cameraTargetBounds: CameraTargetBounds(_egerBounds),
                   cameraTargetBounds: CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
@@ -97,6 +111,7 @@ class _MapPageState extends State<MapPage> {
                   }).toSet(),
                 ),
 
+                // filterek
                 SafeArea(
                   child: Align(
                     alignment: Alignment.topCenter,
@@ -106,8 +121,39 @@ class _MapPageState extends State<MapPage> {
                       ),
                   ),
                 ),
+
+                // kereső gomb
+                if(_showSearchButton) Positioned(
+                    top: 100,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: _searchArea,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            
+                          ),
+                          child: Text(
+                            'Keresés itt',
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ),
+                      ),
+                    ),
+                  )
+                
               ],
             ),
     );
   }
+
+
+
 }
