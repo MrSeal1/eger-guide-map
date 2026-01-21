@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +9,13 @@ class PoiDetailsPage extends StatelessWidget {
   final Poi poi;
 
   const PoiDetailsPage({super.key, required this.poi});
+
+  String? _getPhotoUrlString(String? photoReference) {
+    if (photoReference == null || photoReference.isEmpty) return null;
+
+    final apiKey = dotenv.env['MAPS_API_KEY'];
+    return 'https://places.googleapis.com/v1/$photoReference/media?maxHeightPx=400&maxWidthPx=800&key=$apiKey';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +51,9 @@ class PoiDetailsPage extends StatelessWidget {
                 width: double.infinity,
                 color: Colors.grey.shade300,
                 child:
-                    poi.photoReferences != null &&
-                        poi.photoReferences!.isNotEmpty
+                    poi.photoReferences != null && poi.photoReferences!.isNotEmpty
                     ? Image.network(
-                        'https://picsum.photos/seed/${poi.placeId}/800/400',
+                        _getPhotoUrlString(poi.photoReferences!.first)!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) =>
                             const Icon(Icons.broken_image, size: 50),
