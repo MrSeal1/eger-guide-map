@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/logic/services/auth_service.dart';
 import 'package:maps_testing/pages/favorites_page.dart';
 
 class ProfilePageWidget extends StatelessWidget {
@@ -37,6 +38,8 @@ class ProfilePageWidget extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    Color? iconColor,
+    Color? textColor,
   }) {
     return ListTile(
       onTap: onTap,
@@ -45,15 +48,16 @@ class ProfilePageWidget extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: Colors.green.shade100,
+          color: (iconColor ?? Colors.green.shade800).withAlpha(25),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Colors.green.shade800, size: 24),
+        child: Icon(icon, color: iconColor ?? Colors.green.shade800, size: 24),
       ),
       title: Text(
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
+              color: textColor,
             ),
       ),
       trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.grey),
@@ -130,6 +134,19 @@ class ProfilePageWidget extends StatelessWidget {
                   icon: Icons.info_outline,
                   title: 'Az alkalmazásról',
                   onTap: () {},
+                ),
+              ]),
+
+              _buildCard(context, [
+                _buildProfileItem(
+                  context,
+                  icon: Icons.logout,
+                  title: 'Kijelentkezés',
+                  iconColor: Colors.red,
+                  textColor: Colors.red,
+                  onTap: () async {
+                    await AuthService().signOut();
+                  },
                 ),
               ]),
 
