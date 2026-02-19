@@ -66,6 +66,10 @@ class ProfilePageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = AuthService().currentUser;
+    final userEmail = currentUser?.email ?? 'Ismeretlen felhasználó';
+    final initial = userEmail.isNotEmpty ? userEmail[0].toUpperCase() : '?';
+
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
       body: SingleChildScrollView(
@@ -75,22 +79,35 @@ class ProfilePageWidget extends StatelessWidget {
               const SizedBox(height: 30),
               
               Center(
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: const DecorationImage(
-                      image: NetworkImage('https://picsum.photos/seed/900/600'),
-                      fit: BoxFit.cover,
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.green.shade700,
+                      child: Text(
+                        initial,
+                        style: const TextStyle(
+                          fontSize: 40, 
+                          color: Colors.white, 
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 16),
+                    Text(
+                      userEmail,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                    ),
+                  ],
                 ),
               ),
               
               const SizedBox(height: 30),
 
-              // 2. Fiók Kártya
+              // 1. Fiók kártya
               _buildCard(context, [
                 _buildProfileItem(
                   context,
@@ -114,6 +131,7 @@ class ProfilePageWidget extends StatelessWidget {
                 ),
               ]),
 
+              // 2. beállítások és infó
               _buildCard(context, [
                 _buildProfileItem(
                   context,
@@ -137,6 +155,7 @@ class ProfilePageWidget extends StatelessWidget {
                 ),
               ]),
 
+              // 3. kijelentkezés
               _buildCard(context, [
                 _buildProfileItem(
                   context,
