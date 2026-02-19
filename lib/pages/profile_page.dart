@@ -137,7 +137,9 @@ class ProfilePageWidget extends StatelessWidget {
                   context,
                   icon: Icons.settings,
                   title: 'Beállítások',
-                  onTap: () {},
+                  onTap: () {
+                    // TODO: beállítások oldal
+                  },
                 ),
                 Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
                 _buildProfileItem(
@@ -151,7 +153,9 @@ class ProfilePageWidget extends StatelessWidget {
                   context,
                   icon: Icons.info_outline,
                   title: 'Az alkalmazásról',
-                  onTap: () {},
+                  onTap: () {
+                    // TODO: Info oldal
+                  },
                 ),
               ]),
 
