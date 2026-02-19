@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "236128171180",
+    "project_id": "eger-map-app",
+    "storage_bucket": "eger-map-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236128171180:android:10ecf4ff20fa6a24205b09",
+        "android_client_info": {
+          "package_name": "com.example.maps_testing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "236128171180-uo9mtag2gd022df1mgpihb9al04ilnln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maps_testing",
+            "certificate_hash": "5e3bc8f55da1e8e4815408f76c1a041ca94c74f5"
+          }
+        },
+        {
+          "client_id": "236128171180-pdurio31p4tjjrvhbjq6jl46ecamt8au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7GCEyNLTpcoovwlIGxG93_iwSy89wR2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "236128171180-pdurio31p4tjjrvhbjq6jl46ecamt8au.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "236128171180-jrsof50acto8ljshb1hctoetckn9k1ok.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mapsTesting"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
