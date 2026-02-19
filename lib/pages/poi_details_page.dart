@@ -25,10 +25,8 @@ class PoiDetailsPage extends StatelessWidget {
         actions: [
           Consumer<PoiProvider>(
             builder: (context, provider, child) {
-              final currentpoi = provider.filteredPois.firstWhere(
-                (p) => p.placeId == poi.placeId,
-              );
-              final isFavorite = currentpoi.isFavorite;
+              final currentpoi = provider.getPoiById(poi.placeId);
+              final isFavorite = currentpoi?.isFavorite ?? false;
 
               return IconButton(
                 icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),

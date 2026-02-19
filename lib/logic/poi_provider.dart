@@ -6,6 +6,7 @@ class PoiProvider extends ChangeNotifier {
   final PoiRepository _repository;
 
   List<Poi> _allPois = [];
+  List<Poi> _favorites = [];
   bool _isLoading = false;
   String _selectedCategory = 'all';
 
@@ -13,7 +14,7 @@ class PoiProvider extends ChangeNotifier {
   String get selectedCategory => _selectedCategory;
 
   List<Poi> get filteredPois {
-    if(_selectedCategory == 'all') {
+    if (_selectedCategory == 'all') {
       return _allPois;
     }
 
@@ -22,24 +23,39 @@ class PoiProvider extends ChangeNotifier {
     }).toList();
   }
 
-  List<Poi> get favoritePois {
-    return _allPois.where((poi) => poi.isFavorite).toList();
-  }
-
+  List<Poi> get favoritePois => _favorites;
 
   PoiProvider(this._repository);
-  
+
+  Poi? getPoiById(String id) {
+    try {
+      return _allPois.firstWhere((p) => p.placeId == id);
+    } catch (_) {
+      try {
+        return _favorites.firstWhere((p) => p.placeId == id);
+      } catch (_) {
+        return null;
+      }
+    }
+  }
 
   Future<void> loadPois({double? lat, double? lng, int radius = 2000}) async {
     _isLoading = true;
     notifyListeners();
 
-    // alapból kb Eger közepéről olvas
     final targetLat = lat ?? 47.9025;
     final targetLng = lng ?? 20.3772;
 
     try {
-      _allPois = await _repository.getPois(lat: targetLat, lng: targetLng, radius: radius);
+      final fetchedPois = await _repository.getPois(
+        lat: targetLat,
+        lng: targetLng,
+        radius: radius,
+      );
+      _allPois = fetchedPois.map((poi) {
+        final isFav = _favorites.any((fav) => fav.placeId == poi.placeId);
+        return isFav ? _copyWithFavorite(poi, true) : poi;
+      }).toList();
     } catch (e) {
       debugPrint("Hiba történt: $e");
     } finally {
@@ -53,35 +69,43 @@ class PoiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleFavorite(String placeId) {
-    final index = _allPois.indexWhere((p) => p.placeId == placeId);
+void toggleFavorite(String placeId) {
+    Poi? targetPoi = getPoiById(placeId);
+    if (targetPoi == null) return;
 
-    if(index != -1) {
-      final oldPoi = _allPois[index];
+    final bool isCurrentlyFavorite =
+        _favorites.any((p) => p.placeId == placeId);
 
-      // mivel final az _allPois, kicseréljük a 'régit' egy újjal, csak a favorite megcserélve
-      final newPoi = Poi(
-        placeId: oldPoi.placeId,
-        name: oldPoi.name,
-        lat: oldPoi.lat,
-        lng: oldPoi.lng,
-        description: oldPoi.description,
-        address: oldPoi.address,
-        types: oldPoi.types,
-        rating: oldPoi.rating,
-        userRatingsTotal: oldPoi.userRatingsTotal,
-        openNow: oldPoi.openNow,
-        photoReferences: oldPoi.photoReferences,
-        website: oldPoi.website,
-        phoneNumber: oldPoi.phoneNumber,
-        isFavorite: !oldPoi.isFavorite,
-      );
-
-      _allPois[index] = newPoi;
-
-      notifyListeners();
+    if (isCurrentlyFavorite) {
+      _favorites.removeWhere((p) => p.placeId == placeId);
+    } else {
+      _favorites.add(_copyWithFavorite(targetPoi, true));
     }
+
+    final index = _allPois.indexWhere((p) => p.placeId == placeId);
+    if (index != -1) {
+      _allPois[index] = _copyWithFavorite(_allPois[index], !isCurrentlyFavorite);
+    }
+
+    notifyListeners();
   }
 
-  
+  Poi _copyWithFavorite(Poi oldPoi, bool isFavorite) {
+    return Poi(
+      placeId: oldPoi.placeId,
+      name: oldPoi.name,
+      lat: oldPoi.lat,
+      lng: oldPoi.lng,
+      description: oldPoi.description,
+      address: oldPoi.address,
+      types: oldPoi.types,
+      rating: oldPoi.rating,
+      userRatingsTotal: oldPoi.userRatingsTotal,
+      openNow: oldPoi.openNow,
+      photoReferences: oldPoi.photoReferences,
+      website: oldPoi.website,
+      phoneNumber: oldPoi.phoneNumber,
+      isFavorite: isFavorite,
+    );
+  }
 }
