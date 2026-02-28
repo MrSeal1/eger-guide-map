@@ -31,6 +31,8 @@ class Poi {
     this.isFavorite = false,
   });
 
+
+  // Google API
   factory Poi.fromJson(Map<String, dynamic> json) {
     return Poi(
       placeId: json['id'] ?? '', 
@@ -49,6 +51,7 @@ class Poi {
     );
   }
 
+  // Google API
   Map<String, dynamic> toJson() {
     return {
       'place_id': placeId,
@@ -65,6 +68,43 @@ class Poi {
       'website': website,
       'formatted_phone_number': phoneNumber,
       'is_favorite': isFavorite,
+    }..removeWhere((key, value) => value == null);
+  }
+
+  // Firestore
+  factory Poi.fromFirestore(Map<String, dynamic> json) {
+    return Poi(
+      placeId: json['placeId'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'],
+      lat: (json['lat'] as num?)?.toDouble() ?? 0.0,
+      lng: (json['lng'] as num?)?.toDouble() ?? 0.0,
+      address: json['address'],
+      types: (json['types'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      rating: (json['rating'] as num?)?.toDouble(),
+      userRatingsTotal: (json['userRatingsTotal'] as num?)?.toInt(),
+      photoReferences: (json['photoReferences'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      website: json['website'],
+      phoneNumber: json['phoneNumber'],
+      isFavorite: true,
+    );
+  }
+
+  // Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'placeId': placeId,
+      'name': name,
+      'description': description,
+      'lat': lat,
+      'lng': lng,
+      'address': address,
+      'types': types,
+      'rating': rating,
+      'userRatingsTotal': userRatingsTotal,
+      'photoReferences': photoReferences,
+      'website': website,
+      'phoneNumber': phoneNumber,
     }..removeWhere((key, value) => value == null);
   }
 }
