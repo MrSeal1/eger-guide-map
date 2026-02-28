@@ -46,11 +46,21 @@ class PoiProvider extends ChangeNotifier {
     final targetLat = lat ?? 47.9025;
     final targetLng = lng ?? 20.3772;
 
+    final targetedTypes = [
+      'tourist_attraction',
+      'museum',
+      'park',
+      'restaurant',
+      'shopping_mall',
+      'convenience_store'
+    ];
+
     try {
       final fetchedPois = await _repository.getPois(
         lat: targetLat,
         lng: targetLng,
         radius: radius,
+        includedTypes: targetedTypes
       );
       _allPois = fetchedPois.map((poi) {
         final isFav = _favorites.any((fav) => fav.placeId == poi.placeId);

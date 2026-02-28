@@ -3,7 +3,7 @@ import 'poi_repository.dart';
 
 class MockPoiRepository implements PoiRepository {
   @override
-  Future<List<Poi>> getPois({required double lat, required double lng, required int radius}) async {
+  Future<List<Poi>> getPois({required double lat, required double lng, required int radius, required List<String> includedTypes}) async {
     await Future.delayed(const Duration(milliseconds: 800)); // mesterséges delay, hihetőbb egyelőre...
 
     return [

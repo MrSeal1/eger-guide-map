@@ -11,7 +11,7 @@ class GooglePlacesRepository implements PoiRepository {
   GooglePlacesRepository({required this.apiKey});
 
   @override
-  Future<List<Poi>> getPois({required double lat, required double lng, required int radius}) async {
+  Future<List<Poi>> getPois({required double lat, required double lng, required int radius, required List<String> includedTypes}) async {
     //const egerLat = 47.9025;
     //const egerLng = 20.3772;
     //const radius = 2000; // 2km körzet
@@ -27,14 +27,7 @@ class GooglePlacesRepository implements PoiRepository {
     // TODO: közös neveket használni a google típusok és saját típusok között,
     // hogy a filterezés megbízhatóbban működjön
     // Map<String, List<String>> ?
-    final includedTypes = [
-      'tourist_attraction',
-      'museum',
-      'park',
-      'restaurant',
-      'shopping_mall',
-      'convenience_store'
-    ];
+    
 
     final body = jsonEncode({
         "includedTypes": includedTypes,
