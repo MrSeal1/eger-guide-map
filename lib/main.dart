@@ -4,9 +4,7 @@ import 'package:maps_testing/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'data/repositories/mock_poi_repository.dart';
 import 'logic/poi_provider.dart';
-import 'pages/home_page.dart';
 import 'pages/auth_gate.dart';
 
 void main() async {

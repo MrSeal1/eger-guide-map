@@ -24,7 +24,7 @@ class PoiDetailsPage extends StatelessWidget {
         title: Text(poi.name),
         actions: [
           Consumer<PoiProvider>(
-            builder: (context, provider, child) {
+            builder: (context, provider, _) {
               final currentpoi = provider.getPoiById(poi.placeId);
               final isFavorite = currentpoi?.isFavorite ?? false;
 
@@ -52,8 +52,10 @@ class PoiDetailsPage extends StatelessWidget {
                     poi.photoReferences != null &&
                         poi.photoReferences!.isNotEmpty
                     ? Image.network(
+                        // le kell kérni a képet a Google-től, direktben nem jeleníthető
                         _getPhotoUrlString(poi.photoReferences!.first)!,
                         fit: BoxFit.cover,
+                        // ha valami error keletkezik
                         errorBuilder: (context, error, stackTrace) =>
                             const Icon(Icons.broken_image, size: 50),
                       )

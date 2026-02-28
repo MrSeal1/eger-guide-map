@@ -6,7 +6,7 @@ class PoiProvider extends ChangeNotifier {
   final PoiRepository _repository;
 
   List<Poi> _allPois = [];
-  List<Poi> _favorites = [];
+  final List<Poi> _favorites = [];
   bool _isLoading = false;
   String _selectedCategory = 'all';
 
