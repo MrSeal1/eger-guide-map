@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_testing/data/models/poi.dart';
 import 'package:maps_testing/pages/widgets/filter_widget.dart';
@@ -83,7 +83,7 @@ class _MapPageState extends State<MapPage> {
     final screenBounds = await controller.getVisibleRegion();
     final center = _currentCameraPos.target;
 
-    final double radius = _calculateDistance(center, screenBounds.northeast);
+    final double radius = Geolocator.distanceBetween(center.latitude, center.longitude, screenBounds.northeast.latitude, screenBounds.northeast.longitude);
 
     final searchTarget = _currentCameraPos.target;
     _lastSearchedPos = searchTarget;
@@ -93,16 +93,6 @@ class _MapPageState extends State<MapPage> {
       lng: searchTarget.longitude,
       radius: radius.toInt()
     );
-  }
-
-  // köszi gemini
-  double _calculateDistance(LatLng p1, LatLng p2) {
-    var p = 0.017453292519943295;
-    var c = math.cos;
-    var a = 0.5 - c((p2.latitude - p1.latitude) * p) / 2 +
-        c(p1.latitude * p) * c(p2.latitude * p) *
-        (1 - c((p2.longitude - p1.longitude) * p)) / 2;
-    return 12742 * math.asin(math.sqrt(a)) * 1000;
   }
 
   // kategóriától függően más-más színt ad vissza
@@ -134,7 +124,9 @@ class _MapPageState extends State<MapPage> {
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
           compassEnabled: false,
-          onTap: (_) => _selectedPoi = null,
+          onTap: (_) => setState(() {
+            _selectedPoi = null;
+          }),
           markers: poiProvider.filteredPois.map((poi) {
             // TODO: egyedi marker widget használata, hogy
             // flexibilisebb legyen a méret, ikon, színezés
