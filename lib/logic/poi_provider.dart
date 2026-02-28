@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/logic/services/firestore_service.dart';
 import '../data/models/poi.dart';
 import '../data/repositories/poi_repository.dart';
 
 class PoiProvider extends ChangeNotifier {
   final PoiRepository _repository;
+  final FirestoreService _firestoreService = FirestoreService();
 
   List<Poi> _allPois = [];
-  final List<Poi> _favorites = [];
+  List<Poi> _favorites = [];
   bool _isLoading = false;
   String _selectedCategory = 'all';
 
@@ -25,7 +27,14 @@ class PoiProvider extends ChangeNotifier {
 
   List<Poi> get favoritePois => _favorites;
 
-  PoiProvider(this._repository);
+  PoiProvider(this._repository) {
+    _loadFavoritesFromDb();
+  }
+
+  Future<void> _loadFavoritesFromDb() async {
+    _favorites = await _firestoreService.getFavorites();
+    notifyListeners();
+  }
 
   Poi? getPoiById(String id) {
     try {
@@ -88,8 +97,11 @@ void toggleFavorite(String placeId) {
 
     if (isCurrentlyFavorite) {
       _favorites.removeWhere((p) => p.placeId == placeId);
+      _firestoreService.removeFavorite(placeId);
     } else {
-      _favorites.add(_copyWithFavorite(targetPoi, true));
+      final newFavorite = _copyWithFavorite(targetPoi, true);
+      _favorites.add(newFavorite);
+      _firestoreService.addFavorite(newFavorite);
     }
 
     final index = _allPois.indexWhere((p) => p.placeId == placeId);
