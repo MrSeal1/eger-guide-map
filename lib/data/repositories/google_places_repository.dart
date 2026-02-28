@@ -69,21 +69,7 @@ class GooglePlacesRepository implements PoiRepository {
         else {
           final List placesList = responseData['places'];
 
-          return placesList.map((place) {
-            return Poi(
-              placeId: place['id'], 
-              name: place['displayName'] != null ? place['displayName']['text'] : 'Névtelen hely', 
-              description: place['editorialSummary'] != null ? place['editorialSummary']['text'] : null,
-              lat: place['location']['latitude'], 
-              lng: place['location']['longitude'],
-              types: (place['types'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
-              address: place['formattedAddress'],
-              website: place['websiteUri'] as String?,
-              rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
-              userRatingsTotal: (place['userRatingCount'] as num?)?.toInt() ?? 0,
-              photoReferences: (place['photos'] as List<dynamic>?)?.map((p) => p['name'].toString()).toList(),
-              );
-          }).toList();
+          return placesList.map((place) => Poi.fromJson(place as Map<String, dynamic>)).toList();
         }
       }
     }
