@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:maps_testing/logic/services/firestore_service.dart';
+import 'package:maps_testing/logic/services/location_service.dart';
 import '../data/models/poi.dart';
 import '../data/repositories/poi_repository.dart';
 
 class PoiProvider extends ChangeNotifier {
   final PoiRepository _repository;
   final FirestoreService _firestoreService = FirestoreService();
+  final LocationService _locationService = LocationService();
 
   List<Poi> _allPois = [];
   List<Poi> _favorites = [];
@@ -14,6 +17,9 @@ class PoiProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String get selectedCategory => _selectedCategory;
+
+  Position? _userPosition;
+  Position? get userPosition => _userPosition;
 
   List<Poi> get filteredPois {
     if (_selectedCategory == 'all') {
@@ -129,5 +135,15 @@ void toggleFavorite(String placeId) {
       phoneNumber: oldPoi.phoneNumber,
       isFavorite: isFavorite,
     );
+  }
+
+  Future<void> loadUserPosition() async {
+    final pos = await _locationService.getCurrentPosition();
+
+    if(pos != null) {
+      _userPosition = pos;
+      notifyListeners();
+    }
+    
   }
 }

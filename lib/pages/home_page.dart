@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:maps_testing/pages/list_page.dart';
 import 'package:maps_testing/pages/map_page.dart';
 import 'package:maps_testing/pages/profile_page.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,6 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 1; // térképen kezd
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<PoiProvider>().loadUserPosition();
+  }
 
   final List<Widget> _pages = const [
     ProfilePageWidget(),
