@@ -18,8 +18,14 @@ import 'package:maps_testing/data/models/poi.dart';
 ///     - {userId} (másik felhasználó)
 ///       - favorites
 ///         - ...
+///   
+///   reviews (collection)
+///     - {reviewId}
+///       - {placeId} 
+///       - {userId} (aki értékelte)
+///       - rating (0-5)
+///       - createdAt 
 ///
-
 
 
 class FirestoreService {
