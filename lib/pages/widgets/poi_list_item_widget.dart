@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:provider/provider.dart';
 import '../../data/models/poi.dart';
 import '../poi_details_page.dart';
 
@@ -9,6 +12,24 @@ class PoiListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userPosition = context.watch<PoiProvider>().userPosition;
+    String? distance;
+
+    if (userPosition != null) {
+      final distanceMeters = Geolocator.distanceBetween(
+        userPosition.latitude,
+        userPosition.longitude,
+        poi.lat,
+        poi.lng,
+      );
+
+      if (distanceMeters < 1000) {
+        distance = '${distanceMeters.toStringAsFixed(0)} m';
+      } else {
+        distance = '${(distanceMeters / 1000).toStringAsFixed(1)} km';
+      }
+    }
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
@@ -35,6 +56,7 @@ class PoiListItem extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            
             if (poi.address != null) ...[
               const SizedBox(height: 4),
               Row(
@@ -52,6 +74,7 @@ class PoiListItem extends StatelessWidget {
                 ],
               ),
             ],
+
             if (poi.rating != null) ...[
               const SizedBox(height: 4),
               Row(
@@ -60,20 +83,46 @@ class PoiListItem extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(
                     poi.rating.toString(),
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
-            ]
+            ],
+
+            if (distance != null) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.directions_walk,
+                    size: 14,
+                    color: Colors.blue,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    distance,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey,
+        ),
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => PoiDetailsPage(poi: poi),
-            ),
+            MaterialPageRoute(builder: (context) => PoiDetailsPage(poi: poi)),
           );
         },
       ),
@@ -85,7 +134,9 @@ class PoiListItem extends StatelessWidget {
     if (types.contains('castle')) return Icons.fort;
     if (types.contains('museum')) return Icons.museum;
     if (types.contains('shopping_mall')) return Icons.shopping_bag;
-    if (types.contains('restaurant') || types.contains('food')) return Icons.restaurant;
+    if (types.contains('restaurant') || types.contains('food')) {
+      return Icons.restaurant;
+    }
     if (types.contains('park')) return Icons.park;
     return Icons.place;
   }
