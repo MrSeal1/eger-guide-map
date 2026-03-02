@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
+import 'package:maps_testing/data/models/place_review.dart';
 import 'package:maps_testing/data/models/poi.dart';
 
 ///
 /// Firestore struktúra referencia:
-/// 
+///
 ///   users (collection)
 ///     - {userId} (egyedi UID, Firebase Auth generálja)
 ///       - favorites (collection)
@@ -14,19 +15,18 @@ import 'package:maps_testing/data/models/poi.dart';
 ///           - name: "..."
 ///           - ...
 ///         - {placeId} (másik kedvenc hely Id-ja)
-/// 
+///
 ///     - {userId} (másik felhasználó)
 ///       - favorites
 ///         - ...
-///   
+///
 ///   reviews (collection)
 ///     - {reviewId}
-///       - {placeId} 
+///       - {placeId}
 ///       - {userId} (aki értékelte)
 ///       - rating (0-5)
-///       - createdAt 
+///       - createdAt
 ///
-
 
 class FirestoreService {
   final FirebaseFirestore db = FirebaseFirestore.instance;
@@ -76,9 +76,38 @@ class FirestoreService {
           .collection('favorites')
           .doc(placeId)
           .delete();
-
     } catch (e) {
       debugPrint("Hiba a kedvenc hely törlésekor: $e");
     }
+  }
+
+  Future<void> addReview(String placeId, double rating) async {
+    if (_userId == null) return;
+
+    try {
+      await db.collection('reviews').add({
+        'placeId': placeId,
+        'userId': _userId,
+        'rating': rating,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      debugPrint("Hiba az értékelés mentésével: $e");
+      rethrow;
+    }
+  }
+
+  Stream<List<PlaceReview>> getReviews(String placeId) {
+    // a placeId-ra vonatkozó reviewk, dátum szerint csökkenően
+    return db
+        .collection('reviews')
+        .where('placeId', isEqualTo: placeId)
+        .orderBy('createdAt', descending: true)
+        .snapshots() // snapshot: sima "lekérés" helyett stream jön létre -> valós időben frissülnek a frissítések
+        .map(
+          (snapshot) => snapshot.docs // a streamből érkező dokumentumokat listává alakítja
+              .map((doc) => PlaceReview.fromFirestore(doc))
+              .toList(),
+        );
   }
 }
