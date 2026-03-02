@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,6 +20,24 @@ class PoiDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userPosition = context.watch<PoiProvider>().userPosition;
+    String? distance;
+
+    if (userPosition != null) {
+      final distanceMeters = Geolocator.distanceBetween(
+        userPosition.latitude,
+        userPosition.longitude,
+        poi.lat,
+        poi.lng,
+      );
+
+      if (distanceMeters < 1000) {
+        distance = '${distanceMeters.toStringAsFixed(0)} m';
+      } else {
+        distance = '${(distanceMeters / 1000).toStringAsFixed(1)} km';
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(poi.name),
@@ -136,6 +155,28 @@ class PoiDetailsPage extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                  if (distance != null)
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.directions_walk,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "Távolság: $distance",
+                            style: TextStyle(
+                              color: Theme.of(context).hintColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  
 
                   if (poi.website != null)
                     Row(

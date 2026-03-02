@@ -31,7 +31,6 @@ class PoiListItem extends StatelessWidget {
     }
 
     return Card(
-      elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
@@ -56,50 +55,33 @@ class PoiListItem extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            if (poi.address != null) ...[
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.location_on, size: 14, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      poi.address!,
-                      style: const TextStyle(fontSize: 12),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+            if (poi.address != null) const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on,
+                  size: 14,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    poi.address!,
+                    style: const TextStyle(fontSize: 12),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
 
-            if (poi.rating != null) ...[
-              const SizedBox(height: 4),
+            if (distance != null)
               Row(
                 children: [
-                  const Icon(Icons.star, size: 14, color: Colors.amber),
-                  const SizedBox(width: 4),
-                  Text(
-                    poi.rating.toString(),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-
-            if (distance != null) ...[
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(
+                  Icon(
                     Icons.directions_walk,
                     size: 14,
-                    color: Colors.blue,
+                    color: Theme.of(context).primaryColor,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -111,7 +93,21 @@ class PoiListItem extends StatelessWidget {
                   ),
                 ],
               ),
-            ],
+
+            if (poi.rating != null)
+              Row(
+                children: [
+                  Icon(Icons.star, size: 14, color: Colors.amber),
+                  const SizedBox(width: 4),
+                  Text(
+                    poi.rating.toString(),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
         trailing: const Icon(
