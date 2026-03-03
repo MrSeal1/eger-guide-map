@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_testing/data/models/place_review.dart';
+import 'package:maps_testing/logic/location_provider.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:maps_testing/logic/services/firestore_service.dart';
 import 'package:maps_testing/pages/widgets/review_widget.dart';
@@ -23,7 +24,7 @@ class PoiDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userPosition = context.watch<PoiProvider>().userPosition;
+    final userPosition = context.watch<LocationProvider>().userPosition;
     String? distance;
 
     if (userPosition != null) {

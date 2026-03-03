@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:maps_testing/logic/location_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/poi.dart';
 import '../poi_details_page.dart';
@@ -12,7 +12,7 @@ class PoiListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userPosition = context.watch<PoiProvider>().userPosition;
+    final userPosition = context.watch<LocationProvider>().userPosition;
     String? distance;
 
     if (userPosition != null) {

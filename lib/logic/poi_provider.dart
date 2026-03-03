@@ -8,7 +8,6 @@ import '../data/repositories/poi_repository.dart';
 class PoiProvider extends ChangeNotifier {
   final PoiRepository _repository;
   final FirestoreService _firestoreService = FirestoreService();
-  final LocationService _locationService = LocationService();
 
   List<Poi> _allPois = [];
   List<Poi> _favorites = [];
@@ -17,9 +16,6 @@ class PoiProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String get selectedCategory => _selectedCategory;
-
-  Position? _userPosition;
-  Position? get userPosition => _userPosition;
 
   List<Poi> get filteredPois {
     if (_selectedCategory == 'all') {
@@ -67,7 +63,7 @@ class PoiProvider extends ChangeNotifier {
       'park',
       'restaurant',
       'shopping_mall',
-      'convenience_store'
+      'convenience_store',
     ];
 
     try {
@@ -75,7 +71,7 @@ class PoiProvider extends ChangeNotifier {
         lat: targetLat,
         lng: targetLng,
         radius: radius,
-        includedTypes: targetedTypes
+        includedTypes: targetedTypes,
       );
       _allPois = fetchedPois.map((poi) {
         final isFav = _favorites.any((fav) => fav.placeId == poi.placeId);
@@ -94,12 +90,13 @@ class PoiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-void toggleFavorite(String placeId) {
+  void toggleFavorite(String placeId) {
     Poi? targetPoi = getPoiById(placeId);
     if (targetPoi == null) return;
 
-    final bool isCurrentlyFavorite =
-        _favorites.any((p) => p.placeId == placeId);
+    final bool isCurrentlyFavorite = _favorites.any(
+      (p) => p.placeId == placeId,
+    );
 
     if (isCurrentlyFavorite) {
       _favorites.removeWhere((p) => p.placeId == placeId);
@@ -112,7 +109,10 @@ void toggleFavorite(String placeId) {
 
     final index = _allPois.indexWhere((p) => p.placeId == placeId);
     if (index != -1) {
-      _allPois[index] = _copyWithFavorite(_allPois[index], !isCurrentlyFavorite);
+      _allPois[index] = _copyWithFavorite(
+        _allPois[index],
+        !isCurrentlyFavorite,
+      );
     }
 
     notifyListeners();
@@ -135,15 +135,5 @@ void toggleFavorite(String placeId) {
       phoneNumber: oldPoi.phoneNumber,
       isFavorite: isFavorite,
     );
-  }
-
-  Future<void> loadUserPosition() async {
-    final pos = await _locationService.getCurrentPosition();
-
-    if(pos != null) {
-      _userPosition = pos;
-      notifyListeners();
-    }
-    
   }
 }

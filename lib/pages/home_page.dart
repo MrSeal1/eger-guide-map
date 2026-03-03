@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:maps_testing/logic/location_provider.dart';
 import 'package:maps_testing/pages/list_page.dart';
 import 'package:maps_testing/pages/map_page.dart';
 import 'package:maps_testing/pages/profile_page.dart';
@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    context.read<PoiProvider>().loadUserPosition();
+    context.read<LocationProvider>().loadUserPosition();
   }
 
   final List<Widget> _pages = const [
