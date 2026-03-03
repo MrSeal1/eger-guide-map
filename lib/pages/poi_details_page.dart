@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:maps_testing/data/models/place_review.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:maps_testing/logic/services/firestore_service.dart';
 import 'package:maps_testing/pages/widgets/review_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,6 +92,7 @@ class PoiDetailsPage extends StatelessWidget {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
@@ -98,42 +101,106 @@ class PoiDetailsPage extends StatelessWidget {
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      if (poi.rating != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.amber,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                size: 16,
-                                color: Colors.white,
+
+                      const SizedBox(width: 8),
+
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          // Google értékelések
+                          if (poi.rating != null)
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                poi.rating.toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              if (poi.userRatingsTotal != null)
-                                Text(
-                                  " (${poi.userRatingsTotal})",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 12,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.star,
+                                    size: 14,
+                                    color: Colors.white,
                                   ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    poi.rating.toString(),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  if (poi.userRatingsTotal != null)
+                                    Text(
+                                      " (${poi.userRatingsTotal})",
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+
+                          // appból származó értékelések, valós időben frissül
+                          StreamBuilder<List<PlaceReview>>(
+                            stream: FirestoreService().getReviews(poi.placeId),
+                            builder: (context, snapshot) {
+                              
+                              // ha nincs értékelés akkor semmit
+                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              final reviews = snapshot.data!;
+                              double sum = 0;
+                              for (var review in reviews) {
+                                sum += review.rating;
+                              }
+                              final double average = sum / reviews.length;
+
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
                                 ),
-                            ],
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.verified,
+                                      size: 14,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      average.toStringAsFixed(1),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    Text(
+                                      " (${reviews.length})",
+                                      style: const TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
-                        ),
+                        ],
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -270,7 +337,7 @@ class PoiDetailsPage extends StatelessWidget {
 
             ReviewWidget(placeId: poi.placeId),
 
-            const SizedBox(height: 32)
+            const SizedBox(height: 32),
           ],
         ),
       ),
