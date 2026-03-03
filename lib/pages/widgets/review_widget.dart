@@ -30,14 +30,19 @@ class _ReviewWidgetState extends State<ReviewWidget> {
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             TextButton.icon(
-              onPressed: () {
-                showDialog(
+              onPressed: () async {
+                await showDialog(
                   context: context,
                   builder: (context) => _ReviewDialog(
                     placeId: widget.placeId,
                     placeName: widget.placeName,
                   ),
                 );
+
+                // ha bezárult az ablak, frissítve legyen a widget
+                if(mounted) {
+                  setState(() {});
+                }
               },
               icon: const Icon(Icons.edit),
               label: const Text("Írok"),
