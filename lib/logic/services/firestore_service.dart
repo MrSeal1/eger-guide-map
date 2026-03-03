@@ -107,7 +107,7 @@ class FirestoreService {
         .collection('reviews')
         .where('placeId', isEqualTo: placeId)
         .orderBy('createdAt', descending: true)
-        .snapshots() // snapshot: sima "lekérés" helyett stream jön létre -> valós időben frissülnek a frissítések
+        .snapshots() // snapshot: sima "lekérés" helyett stream jön létre -> valós időben frissülnek az értékelések
         .map(
           (snapshot) => snapshot.docs // a streamből érkező dokumentumokat listává alakítja
               .map((doc) => PlaceReview.fromFirestore(doc))
