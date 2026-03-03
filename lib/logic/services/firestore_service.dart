@@ -23,6 +23,7 @@ import 'package:maps_testing/data/models/poi.dart';
 ///   reviews (collection)
 ///     - {reviewId}
 ///       - {placeId}
+///       - {placeName}
 ///       - {userId} (aki értékelte)
 ///       - rating (0-5)
 ///       - createdAt
@@ -81,7 +82,12 @@ class FirestoreService {
     }
   }
 
-  Future<void> addReview({required String placeId, required String placeName, required double rating, String? comment}) async {
+  Future<void> addReview({
+    required String placeId,
+    required String placeName,
+    required double rating,
+    String? comment,
+  }) async {
     if (_userId == null) return;
 
     try {
@@ -102,17 +108,25 @@ class FirestoreService {
     }
   }
 
-  Stream<List<PlaceReview>> getReviews(String placeId) {
-    // a placeId-ra vonatkozó reviewk, dátum szerint csökkenően
-    return db
+  Future<List<PlaceReview>> getReviews(String placeId) async {
+    final snapshot = await db
         .collection('reviews')
         .where('placeId', isEqualTo: placeId)
         .orderBy('createdAt', descending: true)
-        .snapshots() // snapshot: sima "lekérés" helyett stream jön létre -> valós időben frissülnek az értékelések
-        .map(
-          (snapshot) => snapshot.docs // a streamből érkező dokumentumokat listává alakítja
-              .map((doc) => PlaceReview.fromFirestore(doc))
-              .toList(),
-        );
+        .get();
+
+    return snapshot.docs.map((doc) => PlaceReview.fromFirestore(doc)).toList();
+  }
+
+  Future<List<PlaceReview>> getMyReviews() async {
+    if (_userId == null) return [];
+
+    final snapshot = await db
+        .collection('reviews')
+        .where('userId', isEqualTo: _userId)
+        .orderBy('createdAt', descending: true)
+        .get();
+
+    return snapshot.docs.map((doc) => PlaceReview.fromFirestore(doc)).toList();
   }
 }

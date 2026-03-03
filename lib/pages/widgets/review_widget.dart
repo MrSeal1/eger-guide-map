@@ -46,8 +46,8 @@ class _ReviewWidgetState extends State<ReviewWidget> {
         ),
         const SizedBox(height: 16),
 
-        StreamBuilder<List<PlaceReview>>(
-          stream: FirestoreService().getReviews(widget.placeId),
+        FutureBuilder<List<PlaceReview>>(
+          future: FirestoreService().getReviews(widget.placeId),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

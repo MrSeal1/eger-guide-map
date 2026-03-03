@@ -147,8 +147,8 @@ class PoiDetailsPage extends StatelessWidget {
                             ),
 
                           // appból származó értékelések, valós időben frissül
-                          StreamBuilder<List<PlaceReview>>(
-                            stream: FirestoreService().getReviews(poi.placeId),
+                          FutureBuilder<List<PlaceReview>>(
+                            future: FirestoreService().getReviews(poi.placeId),
                             builder: (context, snapshot) {
                               
                               // ha nincs értékelés akkor semmit
@@ -335,7 +335,7 @@ class PoiDetailsPage extends StatelessWidget {
             const SizedBox(height: 32),
             const Divider(),
 
-            ReviewWidget(placeId: poi.placeId),
+            ReviewWidget(placeId: poi.placeId, placeName: poi.name),
 
             const SizedBox(height: 32),
           ],
