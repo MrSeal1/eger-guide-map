@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:maps_testing/pages/widgets/review_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/models/poi.dart';
@@ -156,27 +157,25 @@ class PoiDetailsPage extends StatelessWidget {
                       ],
                     ),
 
-                  if (distance != null)
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.directions_walk,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "Távolság: $distance",
-                            style: TextStyle(
-                              color: Theme.of(context).hintColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  if (distance != null) const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.directions_walk,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "Távolság: $distance",
+                          style: TextStyle(
+                            color: Theme.of(context).hintColor,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
-                  
+                      ),
+                    ],
+                  ),
 
                   if (poi.website != null)
                     Row(
@@ -265,6 +264,13 @@ class PoiDetailsPage extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 32),
+            const Divider(),
+
+            ReviewWidget(placeId: poi.placeId),
+
+            const SizedBox(height: 32)
           ],
         ),
       ),

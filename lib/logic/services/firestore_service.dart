@@ -81,14 +81,18 @@ class FirestoreService {
     }
   }
 
-  Future<void> addReview(String placeId, double rating) async {
+  Future<void> addReview({required String placeId, required double rating, String? comment}) async {
     if (_userId == null) return;
 
     try {
+      final userEmail = auth.currentUser?.email ?? 'Ismeretlen';
+
       await db.collection('reviews').add({
         'placeId': placeId,
         'userId': _userId,
+        'userEmail': userEmail,
         'rating': rating,
+        'comment': comment,
         'createdAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
