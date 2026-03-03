@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import 'package:maps_testing/data/models/poi.dart';
+import 'package:maps_testing/logic/services/auth_service.dart';
+import 'package:maps_testing/logic/services/firestore_service.dart';
+
+class UserDataProvider extends ChangeNotifier {
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
+  String get userEmail => _authService.currentUser?.email ?? 'Ismeretlen';
+  bool get isLoggedIn => _authService.currentUser != null;
+
+  List<Poi> _favorites = [];
+  List<Poi> get favoritePois => _favorites;
+
+  final List<Poi> _plannedRoute = [];
+  List<Poi> get plannedRoute => _plannedRoute;
+
+  UserDataProvider() {
+    _loadFavoritesFromDb();
+  }
+
+  Future<void> _loadFavoritesFromDb() async {
+    _favorites = await _firestoreService.getFavorites();
+    notifyListeners();
+  }
+
+  void toggleFavorite(Poi poi) {
+    final isFavorite = _favorites.any((p) => p.placeId == poi.placeId);
+    if (isFavorite) {
+      _favorites.removeWhere((p) => p.placeId == poi.placeId);
+      _firestoreService.removeFavorite(poi.placeId);
+    } else {
+      _favorites.add(poi);
+      _firestoreService.addFavorite(poi);
+    }
+    notifyListeners();
+  }
+
+  bool isFavorite(String placeId) {
+    return _favorites.any((p) => p.placeId == placeId);
+  }
+}

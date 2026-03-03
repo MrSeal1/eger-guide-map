@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maps_testing/logic/poi_provider.dart';
+import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/widgets/poi_list_item_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +13,7 @@ class FavoritesPage extends StatelessWidget {
         title: const Text('Kedvenc helyeim'),
         centerTitle: true,
       ),
-      body: Consumer<PoiProvider>(
+      body: Consumer<UserDataProvider>(
         builder: (context, provider, child) {
           final favorites = provider.favoritePois;
 

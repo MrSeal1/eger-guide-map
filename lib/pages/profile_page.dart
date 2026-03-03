@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/logic/services/auth_service.dart';
+import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/favorites_page.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePageWidget extends StatelessWidget {
   const ProfilePageWidget({super.key});
@@ -66,8 +68,7 @@ class ProfilePageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = AuthService().currentUser;
-    final userEmail = currentUser?.email ?? 'Ismeretlen felhasználó';
+    final userEmail = context.watch<UserDataProvider>().userEmail;
     final initial = userEmail.isNotEmpty ? userEmail[0].toUpperCase() : '?';
 
     return Scaffold(

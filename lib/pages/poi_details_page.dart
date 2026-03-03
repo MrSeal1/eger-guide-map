@@ -3,8 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_testing/data/models/place_review.dart';
 import 'package:maps_testing/logic/location_provider.dart';
-import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:maps_testing/logic/services/firestore_service.dart';
+import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/widgets/review_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,15 +46,14 @@ class PoiDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(poi.name),
         actions: [
-          Consumer<PoiProvider>(
+          Consumer<UserDataProvider>(
             builder: (context, provider, _) {
-              final currentpoi = provider.getPoiById(poi.placeId);
-              final isFavorite = currentpoi?.isFavorite ?? false;
+              final isFavorite = provider.isFavorite(poi.placeId);
 
               return IconButton(
                 icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
                 onPressed: () {
-                  provider.toggleFavorite(poi.placeId);
+                  provider.toggleFavorite(poi);
                 },
               );
             },

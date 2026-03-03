@@ -12,7 +12,6 @@ class Poi {
   final List<String>? photoReferences;
   final String? website;
   final String? phoneNumber;
-  final bool isFavorite;
 
   Poi({
     required this.placeId,
@@ -28,7 +27,6 @@ class Poi {
     this.photoReferences,
     this.website,
     this.phoneNumber,
-    this.isFavorite = false,
   });
 
 
@@ -47,7 +45,6 @@ class Poi {
       photoReferences: (json['photos'] as List<dynamic>?)?.map((p) => p['name'].toString()).toList(),
       website: json['websiteUri'] as String?,
       phoneNumber: json['nationalPhoneNumber'] as String?,
-      isFavorite: json['is_favorite'] == true,
     );
   }
 
@@ -67,7 +64,6 @@ class Poi {
       'photos': photoReferences?.map((r) => {'photo_reference': r}).toList(),
       'website': website,
       'formatted_phone_number': phoneNumber,
-      'is_favorite': isFavorite,
     }..removeWhere((key, value) => value == null);
   }
 
@@ -86,7 +82,6 @@ class Poi {
       photoReferences: (json['photoReferences'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
       website: json['website'],
       phoneNumber: json['phoneNumber'],
-      isFavorite: true,
     );
   }
 
