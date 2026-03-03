@@ -4,8 +4,13 @@ import 'package:maps_testing/logic/services/firestore_service.dart';
 
 class ReviewWidget extends StatefulWidget {
   final String placeId;
+  final String placeName;
 
-  const ReviewWidget({super.key, required this.placeId});
+  const ReviewWidget({
+    super.key,
+    required this.placeId,
+    required this.placeName,
+  });
 
   @override
   State<ReviewWidget> createState() => _ReviewWidgetState();
@@ -28,7 +33,10 @@ class _ReviewWidgetState extends State<ReviewWidget> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => _ReviewDialog(placeId: widget.placeId),
+                  builder: (context) => _ReviewDialog(
+                    placeId: widget.placeId,
+                    placeName: widget.placeName,
+                  ),
                 );
               },
               icon: const Icon(Icons.edit),
@@ -49,7 +57,10 @@ class _ReviewWidgetState extends State<ReviewWidget> {
               debugPrint("Stream hiba: ${snapshot.error}");
               return Padding(
                 padding: const EdgeInsets.all(16),
-                child: Text("Hiba történt: ${snapshot.error}", style: const TextStyle(color: Colors.red)),
+                child: Text(
+                  "Hiba történt: ${snapshot.error}",
+                  style: const TextStyle(color: Colors.red),
+                ),
               );
             }
 
@@ -70,7 +81,10 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                 final review = reviews[index];
 
                 return ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   title: Row(
                     children: [
                       Text(
@@ -115,7 +129,9 @@ class _ReviewWidgetState extends State<ReviewWidget> {
 
 class _ReviewDialog extends StatefulWidget {
   final String placeId;
-  const _ReviewDialog({required this.placeId});
+  final String placeName;
+
+  const _ReviewDialog({required this.placeId, required this.placeName});
 
   @override
   State<_ReviewDialog> createState() => __ReviewDialogState();
@@ -145,6 +161,7 @@ class __ReviewDialogState extends State<_ReviewDialog> {
 
       await FirestoreService().addReview(
         placeId: widget.placeId,
+        placeName: widget.placeName,
         rating: selectedStars.toDouble(),
         comment: actualComment,
       );

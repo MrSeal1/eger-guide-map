@@ -81,7 +81,7 @@ class FirestoreService {
     }
   }
 
-  Future<void> addReview({required String placeId, required double rating, String? comment}) async {
+  Future<void> addReview({required String placeId, required String placeName, required double rating, String? comment}) async {
     if (_userId == null) return;
 
     try {
@@ -89,6 +89,7 @@ class FirestoreService {
 
       await db.collection('reviews').add({
         'placeId': placeId,
+        'placeName': placeName,
         'userId': _userId,
         'userEmail': userEmail,
         'rating': rating,
