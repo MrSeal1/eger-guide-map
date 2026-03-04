@@ -40,4 +40,20 @@ class UserDataProvider extends ChangeNotifier {
   bool isFavorite(String placeId) {
     return _favorites.any((p) => p.placeId == placeId);
   }
+
+  void addToRoute(Poi poi) {
+    if (!_plannedRoute.any((p) => p.placeId == poi.placeId)) {
+      _plannedRoute.add(poi);
+      notifyListeners();
+    }
+  }
+
+  void removeFromRoute(Poi poi) {
+    _plannedRoute.removeWhere((p) => p.placeId == poi.placeId);
+    notifyListeners();
+  }
+
+  void reorderRoute(int oldIndex, int newIndex) {
+    // TODO
+  }
 }
