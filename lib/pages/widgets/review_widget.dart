@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/data/models/place_review.dart';
 import 'package:maps_testing/logic/services/firestore_service.dart';
+import 'package:maps_testing/pages/widgets/review_list_item.dart';
 
 class ReviewWidget extends StatefulWidget {
   final String placeId;
@@ -40,7 +41,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
                 );
 
                 // ha bezárult az ablak, frissítve legyen a widget
-                if(mounted) {
+                if (mounted) {
                   setState(() {});
                 }
               },
@@ -83,46 +84,7 @@ class _ReviewWidgetState extends State<ReviewWidget> {
               itemCount: reviews.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                final review = reviews[index];
-
-                return ListTile(
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  title: Row(
-                    children: [
-                      Text(
-                        review.userEmail.split('@')[0],
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-
-                      const Spacer(),
-
-                      Row(
-                        // az értékeléstől függ, hány csillag lesz kitöltve
-                        children: List.generate(
-                          5,
-                          (i) => Icon(
-                            i < review.rating ? Icons.star : Icons.star_border,
-                            size: 16,
-                            color: Colors.amber,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: review.comment != null
-                        ? Text(review.comment!)
-                        : const Text(
-                            "A felhasználó nem írt szöveget.",
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                  ),
-                );
+                return ReviewListItem(review: reviews[index]);
               },
             );
           },

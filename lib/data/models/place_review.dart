@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PlaceReview {
   final String id;
   final String placeId;
-  final String placeName;
+  final String? placeName;
   final String userEmail;
   final String? comment;
   final double rating;
