@@ -146,11 +146,9 @@ class PoiDetailsPage extends StatelessWidget {
                               ),
                             ),
 
-                          // appból származó értékelések, valós időben frissül
                           FutureBuilder<List<PlaceReview>>(
                             future: FirestoreService().getReviews(poi.placeId),
                             builder: (context, snapshot) {
-                              
                               // ha nincs értékelés akkor semmit
                               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                                 return const SizedBox.shrink();
@@ -328,16 +326,14 @@ class PoiDetailsPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const Divider(height: 32),
+
+                  ReviewWidget(placeId: poi.placeId, placeName: poi.name),
+
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
-
-            const SizedBox(height: 32),
-            const Divider(),
-
-            ReviewWidget(placeId: poi.placeId, placeName: poi.name),
-
-            const SizedBox(height: 32),
           ],
         ),
       ),
