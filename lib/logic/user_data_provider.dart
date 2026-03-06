@@ -54,6 +54,13 @@ class UserDataProvider extends ChangeNotifier {
   }
 
   void reorderRoute(int oldIndex, int newIndex) {
-    // TODO
+    // index fixálás
+    if (oldIndex < newIndex) {
+      newIndex -= 1;
+    }
+    
+    final Poi item = _plannedRoute.removeAt(oldIndex);
+    _plannedRoute.insert(newIndex, item);
+    notifyListeners();
   }
 }

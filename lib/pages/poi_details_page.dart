@@ -294,38 +294,93 @@ class PoiDetailsPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () async {
-                        final targetLat = poi.lat;
-                        final targetLng = poi.lng;
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              final targetLat = poi.lat;
+                              final targetLng = poi.lng;
 
-                        final googleMapsUrl = Uri.parse(
-                          "https://www.google.com/maps/dir/?api=1&destination=$targetLat,$targetLng",
-                        );
+                              final googleMapsUrl = Uri.parse(
+                                "https://www.google.com/maps/dir/?api=1&destination=$targetLat,$targetLng",
+                              );
 
-                        if (await canLaunchUrl(googleMapsUrl)) {
-                          await launchUrl(googleMapsUrl);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "Nem sikerült megnyitni a térképet.",
-                              ),
+                              if (await canLaunchUrl(googleMapsUrl)) {
+                                await launchUrl(googleMapsUrl);
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "Nem sikerült megnyitni a térképet.",
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.directions),
+                            label: const Text("Útvonaltervezés ide"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green[700],
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.directions),
-                      label: const Text("Útvonaltervezés ide"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green[700],
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
                       ),
-                    ),
+
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Consumer<UserDataProvider>(
+                            builder: (context, userData, child) {
+                              final isInRoute = userData.plannedRoute.any(
+                                (p) => p.placeId == poi.placeId,
+                              );
+
+                              return ElevatedButton.icon(
+                                onPressed: () {
+                                  if (isInRoute) {
+                                    userData.removeFromRoute(poi);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Eltávolítva az útitervből!",
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    userData.addToRoute(poi);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Hozzáadva az útitervhez!",
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: Icon(
+                                  isInRoute
+                                      ? Icons.playlist_add_check
+                                      : Icons.playlist_add,
+                                ),
+                                label: Text(
+                                  isInRoute ? "Kivétel" : "Hozzáadás",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+
                   const Divider(height: 32),
 
                   ReviewWidget(placeId: poi.placeId, placeName: poi.name),

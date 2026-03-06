@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/logic/location_provider.dart';
+import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/list_page.dart';
 import 'package:maps_testing/pages/map_page.dart';
 import 'package:maps_testing/pages/profile_page.dart';
+import 'package:maps_testing/pages/route_builder_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1; // térképen kezd
+  int _selectedIndex = 2; // térképen kezd
 
   @override
   void initState() {
@@ -23,38 +25,61 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = const [
     ProfilePageWidget(),
+    RouteBuilderPage(),
     MapPage(),
-    ListPage()
+    ListPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+      body: IndexedStack(index: _selectedIndex, children: _pages),
+      bottomNavigationBar: Consumer<UserDataProvider>(
+        builder: (context, userData, child) {
+          final routeCount = userData.plannedRoute.length;
+
+          return BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            // fixed type, mert 4 tagtól kezdve shifting automatikusan
+            type: BottomNavigationBarType.fixed,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+            },
+            items: [
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: "Profil",
+              ),
+
+              BottomNavigationBarItem(
+                icon: Badge(
+                  isLabelVisible: routeCount > 0,
+                  label: Text(
+                    routeCount.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                  child: const Icon(Icons.alt_route_rounded),
+                ),
+                label: "Útvonal",
+              ),
+
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.map_outlined),
+                label: "Térkép",
+              ),
+              
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.list_rounded),
+                label: "Lista",
+              ),
+            ],
+          );
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profil"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            label: "Térkép"
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_rounded),
-            label: "Lista"
-          )
-        ],
       ),
     );
   }
