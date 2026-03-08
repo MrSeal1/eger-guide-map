@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:maps_testing/logic/user_data_provider.dart';
 import '../logic/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -38,6 +40,10 @@ class _LoginPageState extends State<LoginPage> {
         await _authService.signInWithEmail(email, password);
       } else {
         await _authService.registerWithEmail(email, password);
+      }
+
+      if(mounted) {
+        await context.read<UserDataProvider>().loadDataFromDb();
       }
     } catch (e) {
       _showError(_isLoginMode ? 'Hiba a bejelentkezéskor!' : 'Hiba a regisztrációkor!');

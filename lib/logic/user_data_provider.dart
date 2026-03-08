@@ -16,7 +16,7 @@ class UserDataProvider extends ChangeNotifier {
   List<Poi> get plannedRoute => _plannedRoute;
 
   UserDataProvider() {
-    _loadDataFromDb();
+    loadDataFromDb();
   }
 
   void clearUserData() {
@@ -25,7 +25,7 @@ class UserDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadDataFromDb() async {
+  Future<void> loadDataFromDb() async {
     clearUserData();
     _favorites = await _firestoreService.getFavorites();
     _plannedRoute.addAll(await _firestoreService.getRoute());
