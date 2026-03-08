@@ -129,4 +129,43 @@ class FirestoreService {
 
     return snapshot.docs.map((doc) => PlaceReview.fromFirestore(doc)).toList();
   }
+
+  Future<List<Poi>> getRoute() async {
+    if (_userId == null) return [];
+
+    try {
+      final doc = await db.collection('users').doc(_userId).get();
+
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data()!;
+
+        if (data.containsKey('plannedRoute')) {
+          final routeList = data['plannedRoute'] as List<dynamic>;
+
+          return routeList
+              .map((item) => Poi.fromFirestore(item as Map<String, dynamic>))
+              .toList();
+        }
+      }
+
+      return [];
+    } catch (e) {
+      debugPrint("Hiba az útiterv betöltésével: $e");
+      return [];
+    }
+  }
+
+  Future<void> saveRoute(List<Poi> route) async {
+    if (_userId == null) return;
+
+    try {
+      final routeData = route.map((poi) => poi.toFirestore()).toList();
+
+      await db.collection('users').doc(_userId).set({
+        'plannedRoute': routeData,
+      }, SetOptions(merge: true)); // SetOptions(true): ha valamilyen más adat már van, akkor ne cserélje le hanem gyúrja össze
+    } catch (e) {
+      debugPrint('Hiba az útiterv mentésével: $e');
+    }
+  }
 }

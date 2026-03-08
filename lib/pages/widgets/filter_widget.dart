@@ -12,7 +12,6 @@ class FilterWidget extends StatelessWidget {
 
     final categories = [
       {'key': 'all', 'label': 'Minden', 'icon': Icons.explore},
-      {'key': 'favorite', 'label': 'Kedvencek', 'icon': Icons.favorite},
       {'key': 'attraction', 'label': 'Látnivalók', 'icon': Icons.camera_alt},
       {'key': 'castle', 'label': 'Várak', 'icon': Icons.fort},
       {'key': 'museum', 'label': 'Múzeumok', 'icon': Icons.museum},

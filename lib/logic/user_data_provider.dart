@@ -16,11 +16,12 @@ class UserDataProvider extends ChangeNotifier {
   List<Poi> get plannedRoute => _plannedRoute;
 
   UserDataProvider() {
-    _loadFavoritesFromDb();
+    _loadDataFromDb();
   }
 
-  Future<void> _loadFavoritesFromDb() async {
+  Future<void> _loadDataFromDb() async {
     _favorites = await _firestoreService.getFavorites();
+    _plannedRoute.addAll(await _firestoreService.getRoute());
     notifyListeners();
   }
 
@@ -43,12 +44,14 @@ class UserDataProvider extends ChangeNotifier {
   void addToRoute(Poi poi) {
     if (!_plannedRoute.any((p) => p.placeId == poi.placeId)) {
       _plannedRoute.add(poi);
+      _firestoreService.saveRoute(_plannedRoute);
       notifyListeners();
     }
   }
 
   void removeFromRoute(Poi poi) {
     _plannedRoute.removeWhere((p) => p.placeId == poi.placeId);
+    _firestoreService.saveRoute(_plannedRoute);
     notifyListeners();
   }
 
@@ -60,6 +63,7 @@ class UserDataProvider extends ChangeNotifier {
     
     final Poi item = _plannedRoute.removeAt(oldIndex);
     _plannedRoute.insert(newIndex, item);
+    _firestoreService.saveRoute(_plannedRoute);
     notifyListeners();
   }
 }
