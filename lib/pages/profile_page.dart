@@ -28,10 +28,7 @@ class ProfilePageWidget extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: children,
-        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: children),
       ),
     );
   }
@@ -59,11 +56,74 @@ class ProfilePageWidget extends StatelessWidget {
       title: Text(
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: textColor,
-            ),
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.grey),
+      trailing: const Icon(
+        Icons.arrow_forward_ios_rounded,
+        size: 18,
+        color: Colors.grey,
+      ),
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red),
+              SizedBox(width: 8),
+              Text('Fiók törlése'),
+            ],
+          ),
+          content: const Text(
+            'Biztosan törölni szeretnéd a fiókodat és minden mentett adatodat? Ez a művelet nem vonható vissza!',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Mégse', style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () async {
+                try {
+                  await AuthService().deleteAccount();
+                  if (context.mounted) {
+                    context.read<UserDataProvider>().clearUserData();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "A fiók és minden adata sikeresen törölve lett.",
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        duration: const Duration(seconds: 5),
+                      ),
+                    );
+                  }
+                }
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Igen, törlöm'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -79,7 +139,7 @@ class ProfilePageWidget extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 30),
-              
+
               Center(
                 child: Column(
                   children: [
@@ -89,8 +149,8 @@ class ProfilePageWidget extends StatelessWidget {
                       child: Text(
                         initial,
                         style: const TextStyle(
-                          fontSize: 40, 
-                          color: Colors.white, 
+                          fontSize: 40,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -99,14 +159,14 @@ class ProfilePageWidget extends StatelessWidget {
                     Text(
                       userEmail,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 30),
 
               // 1. Fiók kártya
@@ -118,17 +178,29 @@ class ProfilePageWidget extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const FavoritesPage()),
+                      MaterialPageRoute(
+                        builder: (context) => const FavoritesPage(),
+                      ),
                     );
                   },
                 ),
-                Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
+                Divider(
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                  color: Colors.grey.shade200,
+                ),
                 _buildProfileItem(
                   context,
                   icon: Icons.star,
                   title: 'Értékeléseim',
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ReviewsPage()));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ReviewsPage(),
+                      ),
+                    );
                   },
                 ),
               ]),
@@ -143,14 +215,24 @@ class ProfilePageWidget extends StatelessWidget {
                     // TODO: beállítások oldal
                   },
                 ),
-                Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
+                Divider(
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                  color: Colors.grey.shade200,
+                ),
                 _buildProfileItem(
                   context,
                   icon: Icons.download,
                   title: 'Helyi adatok letöltése',
                   onTap: () {},
                 ),
-                Divider(height: 1, indent: 70, endIndent: 20, color: Colors.grey.shade200),
+                Divider(
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                  color: Colors.grey.shade200,
+                ),
                 _buildProfileItem(
                   context,
                   icon: Icons.info_outline,
@@ -161,7 +243,7 @@ class ProfilePageWidget extends StatelessWidget {
                 ),
               ]),
 
-              // 3. kijelentkezés
+              // 3. kijelentkezés és profil törlése
               _buildCard(context, [
                 _buildProfileItem(
                   context,
@@ -170,7 +252,24 @@ class ProfilePageWidget extends StatelessWidget {
                   iconColor: Colors.red,
                   textColor: Colors.red,
                   onTap: () async {
+                    context.read<UserDataProvider>().clearUserData();
                     await AuthService().signOut();
+                  },
+                ),
+                Divider(
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                  color: Colors.grey.shade200,
+                ),
+                _buildProfileItem(
+                  context,
+                  icon: Icons.delete,
+                  title: 'Fiók végleges törlése',
+                  iconColor: Colors.red,
+                  textColor: Colors.red,
+                  onTap: () {
+                    _showDeleteAccountDialog(context);
                   },
                 ),
               ]),

@@ -168,4 +168,15 @@ class FirestoreService {
       debugPrint('Hiba az útiterv mentésével: $e');
     }
   }
+
+  Future<void> deleteUserData() async {
+    if(_userId == null) return;
+
+    try {
+      await db.collection('users').doc(_userId).delete();
+    } catch(e) {
+      debugPrint("Hiba a felhasználó adatok törlésekor: $e");
+      rethrow;
+    }
+  }
 }

@@ -19,7 +19,14 @@ class UserDataProvider extends ChangeNotifier {
     _loadDataFromDb();
   }
 
+  void clearUserData() {
+    _favorites.clear();
+    _plannedRoute.clear();
+    notifyListeners();
+  }
+
   Future<void> _loadDataFromDb() async {
+    clearUserData();
     _favorites = await _firestoreService.getFavorites();
     _plannedRoute.addAll(await _firestoreService.getRoute());
     notifyListeners();
