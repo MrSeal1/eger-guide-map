@@ -8,7 +8,6 @@ class UserDataProvider extends ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
 
   String get userEmail => _authService.currentUser?.email ?? 'Ismeretlen';
-  bool get isLoggedIn => _authService.currentUser != null;
 
   List<Poi> _favorites = [];
   List<Poi> get favoritePois => _favorites;
