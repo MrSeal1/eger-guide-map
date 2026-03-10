@@ -27,6 +27,9 @@ class PoiDetailsPage extends StatelessWidget {
     final userPosition = context.watch<LocationProvider>().userPosition;
     String? distance;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     if (userPosition != null) {
       final distanceMeters = Geolocator.distanceBetween(
         userPosition.latitude,
@@ -69,7 +72,7 @@ class PoiDetailsPage extends StatelessWidget {
               child: Container(
                 height: 250,
                 width: double.infinity,
-                color: Colors.grey.shade300,
+                color: theme.hintColor,
                 child:
                     poi.photoReferences != null &&
                         poi.photoReferences!.isNotEmpty
@@ -97,7 +100,7 @@ class PoiDetailsPage extends StatelessWidget {
                       Expanded(
                         child: Text(
                           poi.name,
-                          style: Theme.of(context).textTheme.headlineSmall
+                          style: theme.textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -167,7 +170,7 @@ class PoiDetailsPage extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor,
+                                  color: colorScheme.primary,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
@@ -208,14 +211,14 @@ class PoiDetailsPage extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.location_on,
-                          color: Theme.of(context).primaryColor,
+                          color: colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             poi.address!,
                             style: TextStyle(
-                              color: Theme.of(context).hintColor,
+                              color: theme.hintColor,
                             ),
                           ),
                         ),
@@ -227,14 +230,14 @@ class PoiDetailsPage extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.directions_walk,
-                        color: Theme.of(context).primaryColor,
+                        color: colorScheme.primary,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           "Távolság: $distance",
                           style: TextStyle(
-                            color: Theme.of(context).hintColor,
+                            color: theme.hintColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -245,15 +248,16 @@ class PoiDetailsPage extends StatelessWidget {
                   if (poi.website != null)
                     Row(
                       children: [
-                        Icon(Icons.link, color: Theme.of(context).primaryColor),
+                        Icon(Icons.link, color: colorScheme.primary),
                         SizedBox(width: 8),
                         Expanded(
                           child: GestureDetector(
                             child: Text(
                               poi.website!,
                               style: TextStyle(
-                                color: Theme.of(context).primaryColorDark,
+                                color: colorScheme.onSurface,
                                 fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline
                               ),
                               softWrap: true,
                             ),
@@ -282,7 +286,7 @@ class PoiDetailsPage extends StatelessWidget {
 
                   Text(
                     "Leírás",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -323,8 +327,8 @@ class PoiDetailsPage extends StatelessWidget {
                             icon: const Icon(Icons.directions),
                             label: const Text("Útvonaltervezés ide"),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green[700],
-                              foregroundColor: Colors.white,
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
@@ -372,6 +376,10 @@ class PoiDetailsPage extends StatelessWidget {
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorScheme.tertiary,
+                                  foregroundColor: colorScheme.onTertiary
                                 ),
                               );
                             },
