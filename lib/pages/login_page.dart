@@ -14,13 +14,16 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
-  
+
   bool _isLoading = false;
   bool _isLoginMode = true;
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message, style: const TextStyle(color: Colors.white)), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
@@ -42,11 +45,13 @@ class _LoginPageState extends State<LoginPage> {
         await _authService.registerWithEmail(email, password);
       }
 
-      if(mounted) {
+      if (mounted) {
         await context.read<UserDataProvider>().loadDataFromDb();
       }
     } catch (e) {
-      _showError(_isLoginMode ? 'Hiba a bejelentkezéskor!' : 'Hiba a regisztrációkor!');
+      _showError(
+        _isLoginMode ? 'Hiba a bejelentkezéskor!' : 'Hiba a regisztrációkor!',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -54,6 +59,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorSceme = theme.colorScheme;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -63,11 +71,14 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.map_outlined, size: 80, color: Colors.green),
+                Icon(Icons.map_outlined, size: 80, color: colorSceme.primary),
                 const SizedBox(height: 24),
                 Text(
                   _isLoginMode ? 'Üdvözlünk!' : 'Fiók létrehozása',
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
@@ -94,14 +105,18 @@ class _LoginPageState extends State<LoginPage> {
                 if (_isLoading)
                   const Center(child: CircularProgressIndicator())
                 else
-                  ElevatedButton(
+                  FilledButton(
                     onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[700],
-                      foregroundColor: Colors.white,
+                    style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: Text(_isLoginMode ? 'Bejelentkezés' : 'Regisztráció'),
+                    child: Text(
+                      _isLoginMode ? 'Bejelentkezés' : 'Regisztráció',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 const SizedBox(height: 16),
                 TextButton(
