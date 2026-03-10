@@ -19,6 +19,9 @@ class FilterWidget extends StatelessWidget {
       {'key': 'restaurant', 'label': 'Éttermek', 'icon': Icons.restaurant},
     ];
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return SizedBox(
       height: 50,
       child: ListView.separated(
@@ -29,12 +32,16 @@ class FilterWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           final cat = categories[index];
           final isSelected = currentCategory == cat['key'];
+          
+          final foregroundColor = isSelected 
+              ? colorScheme.onPrimary 
+              : colorScheme.onSurface;
 
           return ChoiceChip(
             avatar: Icon(
               cat['icon'] as IconData,
               size: 18,
-              color: isSelected ? Colors.white : Colors.green[700],
+              color: foregroundColor,
             ),
             label: Text(cat['label'] as String),
             selected: isSelected,
@@ -43,13 +50,16 @@ class FilterWidget extends StatelessWidget {
                 context.read<PoiProvider>().setCategory(cat['key'] as String);
               }
             },
-            selectedColor: Colors.green[700],
+
+            selectedColor: colorScheme.primary,
+            backgroundColor: colorScheme.onPrimary,
+            
             labelStyle: TextStyle(
-              color: isSelected ? Colors.white : Colors.black87,
+              color: foregroundColor, 
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
-            backgroundColor: Colors.white,
-            elevation: 2,
+
+            elevation: isSelected ? 4 : 1,
             showCheckmark: false,
           );
         },
