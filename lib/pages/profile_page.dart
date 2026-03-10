@@ -9,23 +9,12 @@ import 'package:provider/provider.dart';
 class ProfilePageWidget extends StatelessWidget {
   const ProfilePageWidget({super.key});
 
-  static const String routeName = 'ProfilePage';
-  static const String routePath = '/profilePage';
-
   Widget _buildCard(BuildContext context, List<Widget> children) {
-    return Container(
-      width: double.infinity,
+    return Card(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -49,22 +38,26 @@ class ProfilePageWidget extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: (iconColor ?? Colors.green.shade800).withAlpha(25),
+          color: (iconColor ?? Theme.of(context).colorScheme.primary).withAlpha(25),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: iconColor ?? Colors.green.shade800, size: 24),
+        child: Icon(
+          icon,
+          color: iconColor ?? Theme.of(context).colorScheme.primary,
+          size: 24,
+        ),
       ),
       title: Text(
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.bold,
           color: textColor,
         ),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         Icons.arrow_forward_ios_rounded,
         size: 18,
-        color: Colors.grey,
+        color: Theme.of(context).hintColor,
       ),
     );
   }
@@ -133,8 +126,12 @@ class ProfilePageWidget extends StatelessWidget {
     final userEmail = context.watch<UserDataProvider>().userEmail;
     final initial = userEmail.isNotEmpty ? userEmail[0].toUpperCase() : '?';
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final dividerColor = theme.dividerColor;
+
     return Scaffold(
-      backgroundColor: const Color(0xfff5f5f5),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
@@ -146,12 +143,12 @@ class ProfilePageWidget extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.green.shade700,
+                      backgroundColor: colorScheme.primary,
                       child: Text(
                         initial,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 40,
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -161,7 +158,6 @@ class ProfilePageWidget extends StatelessWidget {
                       userEmail,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
                       ),
                     ),
                   ],
@@ -189,7 +185,7 @@ class ProfilePageWidget extends StatelessWidget {
                   height: 1,
                   indent: 20,
                   endIndent: 20,
-                  color: Colors.grey.shade200,
+                  color: dividerColor,
                 ),
                 _buildProfileItem(
                   context,
@@ -225,7 +221,7 @@ class ProfilePageWidget extends StatelessWidget {
                   height: 1,
                   indent: 20,
                   endIndent: 20,
-                  color: Colors.grey.shade200,
+                  color: dividerColor,
                 ),
                 _buildProfileItem(
                   context,
@@ -237,7 +233,7 @@ class ProfilePageWidget extends StatelessWidget {
                   height: 1,
                   indent: 20,
                   endIndent: 20,
-                  color: Colors.grey.shade200,
+                  color: dividerColor,
                 ),
                 _buildProfileItem(
                   context,
@@ -266,7 +262,7 @@ class ProfilePageWidget extends StatelessWidget {
                   height: 1,
                   indent: 20,
                   endIndent: 20,
-                  color: Colors.grey.shade200,
+                  color: dividerColor,
                 ),
                 _buildProfileItem(
                   context,
