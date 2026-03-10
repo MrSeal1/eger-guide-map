@@ -58,6 +58,10 @@ class RouteBuilderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+
     return Scaffold(
       appBar: AppBar(title: const Text('Útiterv építő'), centerTitle: true),
       body: Consumer<UserDataProvider>(
@@ -69,7 +73,7 @@ class RouteBuilderPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.map_outlined, size: 80),
+                  Icon(Icons.map_outlined, size: 80, color: colorScheme.primary,),
                   const SizedBox(height: 16),
                   const Text(
                     "Még nem adtál hozzá helyeket.",
@@ -94,7 +98,7 @@ class RouteBuilderPage extends StatelessWidget {
                       child: Text(
                         "Tartsd lenyomva a két vonalat a sorrend módosításához!",
                         style: TextStyle(
-                          color: Theme.of(context).primaryColor,
+                          color: colorScheme.primary,
                           fontSize: 13,
                         ),
                       ),
@@ -116,8 +120,8 @@ class RouteBuilderPage extends StatelessWidget {
                       key: ValueKey(poi.placeId),
 
                       leading: CircleAvatar(
-                        backgroundColor: Colors.green.shade700,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colorScheme.onPrimary,
+                        foregroundColor: colorScheme.primary,
                         child: Text('${index + 1}'),
                       ),
 
@@ -139,7 +143,7 @@ class RouteBuilderPage extends StatelessWidget {
 
                           const SizedBox(width: 8),
 
-                          const Icon(Icons.drag_handle, color: Colors.grey),
+                          Icon(Icons.drag_handle, color: theme.hintColor),
                         ],
                       ),
                     );
@@ -162,8 +166,8 @@ class RouteBuilderPage extends StatelessWidget {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green.shade700,
-                      foregroundColor: Colors.white,
+                      backgroundColor: colorScheme.onPrimary,
+                      foregroundColor: colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
