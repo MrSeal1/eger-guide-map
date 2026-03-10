@@ -3,6 +3,7 @@ import 'package:maps_testing/logic/services/auth_service.dart';
 import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/favorites_page.dart';
 import 'package:maps_testing/pages/reviews_page.dart';
+import 'package:maps_testing/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePageWidget extends StatelessWidget {
@@ -212,7 +213,12 @@ class ProfilePageWidget extends StatelessWidget {
                   icon: Icons.settings,
                   title: 'Beállítások',
                   onTap: () {
-                    // TODO: beállítások oldal
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsPage(),
+                      ),
+                    );
                   },
                 ),
                 Divider(
