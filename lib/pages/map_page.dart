@@ -32,7 +32,6 @@ class _MapPageState extends State<MapPage> {
     zoom: 13,
   );
 
-
   @override
   void initState() {
     super.initState();
@@ -83,7 +82,12 @@ class _MapPageState extends State<MapPage> {
     final screenBounds = await controller.getVisibleRegion();
     final center = _currentCameraPos.target;
 
-    final double radius = Geolocator.distanceBetween(center.latitude, center.longitude, screenBounds.northeast.latitude, screenBounds.northeast.longitude);
+    final double radius = Geolocator.distanceBetween(
+      center.latitude,
+      center.longitude,
+      screenBounds.northeast.latitude,
+      screenBounds.northeast.longitude,
+    );
 
     final searchTarget = _currentCameraPos.target;
     _lastSearchedPos = searchTarget;
@@ -91,7 +95,7 @@ class _MapPageState extends State<MapPage> {
     context.read<PoiProvider>().loadPois(
       lat: searchTarget.latitude,
       lng: searchTarget.longitude,
-      radius: radius.toInt()
+      radius: radius.toInt(),
     );
   }
 
@@ -99,7 +103,10 @@ class _MapPageState extends State<MapPage> {
   double _getMarkerColor(List<String>? types) {
     if (types == null || types.isEmpty) return BitmapDescriptor.hueRed;
     if (types.contains('castle')) return BitmapDescriptor.hueMagenta;
-    if (types.contains('shopping_mall') || types.contains('store') || types.contains('shopping')) return BitmapDescriptor.hueBlue;
+    if (types.contains('shopping_mall') ||
+        types.contains('store') ||
+        types.contains('shopping'))
+      return BitmapDescriptor.hueBlue;
     if (types.contains('restaurant')) return BitmapDescriptor.hueYellow;
     return BitmapDescriptor.hueGreen;
   }
@@ -118,7 +125,8 @@ class _MapPageState extends State<MapPage> {
           initialCameraPosition: _currentCameraPos,
           style: _mapStyle,
           //cameraTargetBounds: CameraTargetBounds(_egerBounds),
-          cameraTargetBounds: CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
+          cameraTargetBounds:
+              CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
           minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),
           myLocationButtonEnabled: true,
           zoomControlsEnabled: false,
@@ -138,9 +146,9 @@ class _MapPageState extends State<MapPage> {
               ),
               onTap: () {
                 setState(() {
-                  _selectedPoi = poi;               
+                  _selectedPoi = poi;
                 });
-              }                
+              },
             );
           }).toSet(),
         ),
@@ -162,28 +170,24 @@ class _MapPageState extends State<MapPage> {
             alignment: Alignment.topCenter,
             child: SafeArea(
               child: Padding(
-                padding: EdgeInsets.only(top: 60),
-                child: GestureDetector(
-                  onTap: _searchArea,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(20),
-                          blurRadius: 5,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                padding: const EdgeInsets.only(top: 70),
+                child: ElevatedButton.icon(
+                  onPressed: _searchArea,
+                  icon: const Icon(Icons.search, size: 18),
+                  label: const Text(
+                    'Keresés a területen',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    elevation: 4,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 20,
                     ),
-                    child: Text(
-                      'Keresés itt',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
@@ -191,29 +195,16 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
 
-          // TODO: ahelyett hogy új oldalra vinne felnyíló menü widget animációval
-          AnimatedPositioned(
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            left: 20,
-            right: 20,
-            bottom: _selectedPoi != null ? 25 : -250,
-            child: _selectedPoi != null
-              ? Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(20),
-                          blurRadius: 5,
-                          offset: const Offset(0, 4),
-                    ),
-                  ]
-                ),
-                child: PoiListItem(poi: _selectedPoi!),
-              )
-              : SizedBox(),
-          ),
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          left: 20,
+          right: 20,
+          bottom: _selectedPoi != null ? 25 : -250,
+          child: _selectedPoi != null
+              ? PoiListItem(poi: _selectedPoi!)
+              : const SizedBox(),
+        ),
 
         if (poiProvider.isLoading) Center(child: CircularProgressIndicator()),
       ],
