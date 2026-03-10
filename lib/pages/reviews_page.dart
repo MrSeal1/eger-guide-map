@@ -20,8 +20,23 @@ class ReviewsPage extends StatelessWidget {
           final reviews = snapshot.data;
 
           if (reviews == null || reviews.isEmpty) {
-            return const Center(
-              child: Text("Még nincs megjeleníthető értékelésed."),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.star_border,
+                    size: 80,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Még nincs megjeleníthető értékelésed.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
             );
           }
 
