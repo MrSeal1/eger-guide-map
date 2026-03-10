@@ -15,6 +15,9 @@ class PoiListItem extends StatelessWidget {
     final userPosition = context.watch<LocationProvider>().userPosition;
     String? distance;
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     if (userPosition != null) {
       final distanceMeters = Geolocator.distanceBetween(
         userPosition.latitude,
@@ -39,12 +42,12 @@ class PoiListItem extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: Colors.green.shade100,
+            color: colorScheme.primary.withAlpha(25),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             _getIconForType(poi.types),
-            color: Colors.green.shade800,
+            color: colorScheme.primary,
             size: 30,
           ),
         ),
@@ -61,7 +64,7 @@ class PoiListItem extends StatelessWidget {
                 Icon(
                   Icons.location_on,
                   size: 14,
-                  color: Theme.of(context).primaryColor,
+                  color: colorScheme.primary,
                 ),
                 const SizedBox(width: 4),
                 Expanded(
@@ -81,7 +84,7 @@ class PoiListItem extends StatelessWidget {
                   Icon(
                     Icons.directions_walk,
                     size: 14,
-                    color: Theme.of(context).primaryColor,
+                    color: colorScheme.primary,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -110,10 +113,10 @@ class PoiListItem extends StatelessWidget {
               ),
           ],
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 16,
-          color: Colors.grey,
+          color: theme.hintColor,
         ),
         onTap: () {
           Navigator.push(
