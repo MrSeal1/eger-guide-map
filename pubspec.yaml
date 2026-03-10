@@ -49,5 +49,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-  - assets/maps_theme.json
+  - assets/maps_theme_light.json
+  - assets/maps_theme_dark.json
   - .env

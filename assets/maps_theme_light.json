@@ -9,7 +9,25 @@
     ]
   },
   {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
     "featureType": "poi",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text",
     "stylers": [
       {
         "visibility": "off"
@@ -26,7 +44,8 @@
     ]
   },
   {
-    "featureType": "transit",
+    "featureType": "road.local",
+    "elementType": "labels",
     "stylers": [
       {
         "visibility": "off"
@@ -34,26 +53,10 @@
     ]
   },
   {
-    "featureType": "poi.park",
-    "elementType": "geometry",
+    "featureType": "transit",
     "stylers": [
       {
-        "visibility": "on"
-      },
-      {
-        "color": "#a5b076" 
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "visibility": "on"
-      },
-      {
-        "color": "#aee1f4"
+        "visibility": "off"
       }
     ]
   }

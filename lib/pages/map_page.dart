@@ -19,7 +19,8 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  String? _mapStyle;
+  String? _lightMapStyle;
+  String? _darkMapStyle;
 
   bool _showSearchButton = true;
   LatLng? _lastSearchedPos;
@@ -35,21 +36,19 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _loadMapStyle();
+    _loadMapStyles();
     _lastSearchedPos = _center;
   }
 
-  void _loadMapStyle() {
-    rootBundle
-        .loadString('assets/maps_theme.json')
-        .then((String styleString) {
-          setState(() {
-            _mapStyle = styleString;
-          });
-        })
-        .catchError((err) {
-          debugPrint('Hiba a stílus beolvasásakor: $err');
-        });
+Future<void> _loadMapStyles() async {
+    try {
+      _lightMapStyle = await rootBundle.loadString('assets/maps_theme_light.json');
+      _darkMapStyle = await rootBundle.loadString('assets/maps_theme_dark.json');
+      
+      if (mounted) setState(() {});
+    } catch (err) {
+      debugPrint('Hiba a stílus beolvasásakor: $err');
+    }
   }
 
   static const LatLng _center = LatLng(47.9025, 20.3772);
@@ -115,6 +114,8 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     final poiProvider = context.watch<PoiProvider>();
 
+    final currentMapStyle = Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle;
+
     return Stack(
       children: [
         // térkép
@@ -123,7 +124,7 @@ class _MapPageState extends State<MapPage> {
           onCameraMove: _onCameraMove,
           onCameraIdle: _onCameraIdle,
           initialCameraPosition: _currentCameraPos,
-          style: _mapStyle,
+          style: currentMapStyle,
           //cameraTargetBounds: CameraTargetBounds(_egerBounds),
           cameraTargetBounds:
               CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
