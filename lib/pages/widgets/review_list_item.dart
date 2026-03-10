@@ -21,6 +21,8 @@ class ReviewListItem extends StatelessWidget {
         ? (review.placeName ?? 'Ismeretlen hely')
         : review.userEmail.split('@')[0];
 
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: Column(
@@ -52,9 +54,9 @@ class ReviewListItem extends StatelessWidget {
           if (review.comment != null && review.comment!.isNotEmpty)
             Text(review.comment!)
           else
-            const Text(
+            Text(
               "Csak csillagos értékelés.",
-              style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+              style: TextStyle(fontStyle: FontStyle.italic, color: theme.hintColor),
             ),
           const SizedBox(height: 8)
         ],
