@@ -24,11 +24,6 @@ class GooglePlacesRepository implements PoiRepository {
       'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.displayName,places.types,places.photos,places.rating,places.userRatingCount,places.websiteUri,places.editorialSummary'
     };
 
-    // TODO: közös neveket használni a google típusok és saját típusok között,
-    // hogy a filterezés megbízhatóbban működjön
-    // Map<String, List<String>> ?
-    
-
     final body = jsonEncode({
         "includedTypes": includedTypes,
         "maxResultCount": 20,

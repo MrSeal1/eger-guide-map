@@ -13,9 +13,9 @@ class FilterWidget extends StatelessWidget {
     final categories = [
       {'key': 'all', 'label': 'Minden', 'icon': Icons.explore},
       {'key': 'attraction', 'label': 'Látnivalók', 'icon': Icons.camera_alt},
-      {'key': 'castle', 'label': 'Várak', 'icon': Icons.fort},
       {'key': 'museum', 'label': 'Múzeumok', 'icon': Icons.museum},
-      {'key': 'shopping_mall', 'label': 'Bevásárlás', 'icon': Icons.shopping_bag},
+      {'key': 'park', 'label': 'Parkok', 'icon': Icons.park},
+      {'key': 'shopping', 'label': 'Bevásárlás', 'icon': Icons.shopping_bag},
       {'key': 'restaurant', 'label': 'Éttermek', 'icon': Icons.restaurant},
     ];
 

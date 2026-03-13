@@ -101,13 +101,13 @@ Future<void> _loadMapStyles() async {
   // kategóriától függően más-más színt ad vissza
   double _getMarkerColor(List<String>? types) {
     if (types == null || types.isEmpty) return BitmapDescriptor.hueRed;
-    if (types.contains('castle')) return BitmapDescriptor.hueMagenta;
-    if (types.contains('shopping_mall') ||
-        types.contains('store') ||
-        types.contains('shopping'))
-      return BitmapDescriptor.hueBlue;
-    if (types.contains('restaurant')) return BitmapDescriptor.hueYellow;
-    return BitmapDescriptor.hueGreen;
+    
+    if (types.any((t) => PoiProvider.categoryMapping['museum']!.contains(t))) return BitmapDescriptor.hueMagenta;
+    if (types.any((t) => PoiProvider.categoryMapping['shopping']!.contains(t))) return BitmapDescriptor.hueBlue;
+    if (types.any((t) => PoiProvider.categoryMapping['restaurant']!.contains(t))) return BitmapDescriptor.hueYellow;
+    if (types.any((t) => PoiProvider.categoryMapping['park']!.contains(t))) return BitmapDescriptor.hueGreen;
+    
+    return BitmapDescriptor.hueRed; 
   }
 
   @override

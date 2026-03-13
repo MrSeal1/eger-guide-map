@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:maps_testing/logic/location_provider.dart';
+import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/poi.dart';
 import '../poi_details_page.dart';
@@ -130,13 +131,12 @@ class PoiListItem extends StatelessWidget {
 
   IconData _getIconForType(List<String>? types) {
     if (types == null || types.isEmpty) return Icons.place;
-    if (types.contains('castle')) return Icons.fort;
-    if (types.contains('museum')) return Icons.museum;
-    if (types.contains('shopping_mall')) return Icons.shopping_bag;
-    if (types.contains('restaurant') || types.contains('food')) {
-      return Icons.restaurant;
-    }
-    if (types.contains('park')) return Icons.park;
-    return Icons.place;
+    
+    if (types.any((t) => PoiProvider.categoryMapping['museum']!.contains(t))) return Icons.museum;
+    if (types.any((t) => PoiProvider.categoryMapping['shopping']!.contains(t))) return Icons.shopping_bag;
+    if (types.any((t) => PoiProvider.categoryMapping['restaurant']!.contains(t))) return Icons.restaurant;
+    if (types.any((t) => PoiProvider.categoryMapping['park']!.contains(t))) return Icons.park;
+    
+    return Icons.camera_alt; 
   }
 }

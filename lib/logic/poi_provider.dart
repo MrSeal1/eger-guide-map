@@ -12,13 +12,26 @@ class PoiProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String get selectedCategory => _selectedCategory;
 
+  // key: saját kategória név
+  // value: Google API által használt nevek
+  static const Map<String, List<String>> categoryMapping = {
+    'attraction': ['tourist_attraction', 'historical_landmark', 'church'],
+    'museum': ['museum'],
+    'park': ['park', 'national_park'],
+    'shopping': ['shopping_mall', 'supermarket', 'store'],
+    'restaurant': ['restaurant', 'cafe', 'bar', 'bakery'],
+  };
+
   List<Poi> get filteredPois {
     if (_selectedCategory == 'all') {
       return _allPois;
     }
 
+    final allowedTypes = categoryMapping[_selectedCategory] ?? [];
+
     return _allPois.where((poi) {
-      return poi.types != null && poi.types!.contains(_selectedCategory);
+      if(poi.types == null) return false;
+      return poi.types!.any((type) => allowedTypes.contains(type));
     }).toList();
   }
 
@@ -39,14 +52,7 @@ class PoiProvider extends ChangeNotifier {
     final targetLat = lat ?? 47.9025;
     final targetLng = lng ?? 20.3772;
 
-    final targetedTypes = [
-      'tourist_attraction',
-      'museum',
-      'park',
-      'restaurant',
-      'shopping_mall',
-      'convenience_store',
-    ];
+    final targetedTypes = categoryMapping.values.expand((types) => types).toList();
 
     try {
       _allPois = await _repository.getPois(
