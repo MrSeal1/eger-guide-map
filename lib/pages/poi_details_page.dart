@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
@@ -76,13 +77,15 @@ class PoiDetailsPage extends StatelessWidget {
                 child:
                     poi.photoReferences != null &&
                         poi.photoReferences!.isNotEmpty
-                    ? Image.network(
-                        // le kell kérni a képet a Google-től, direktben nem jeleníthető
-                        _getPhotoUrlString(poi.photoReferences!.first)!,
-                        fit: BoxFit.cover,
-                        // ha valami error keletkezik
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.broken_image, size: 50),
+                    ? CachedNetworkImage(
+                        imageUrl: _getPhotoUrlString(poi.photoReferences!.first)!,
+                        fit: BoxFit.cover,                        
+                        placeholder: (context, url) => Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        errorWidget: (context, url, error) => const Center(
+                          child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                        ),
                       )
                     : const Icon(Icons.image, size: 100, color: Colors.grey),
               ),
