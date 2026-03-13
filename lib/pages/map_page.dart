@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_testing/data/models/poi.dart';
+import 'package:maps_testing/logic/location_provider.dart';
 import 'package:maps_testing/pages/widgets/custom_marker_widget.dart';
 import 'package:maps_testing/pages/widgets/filter_widget.dart';
 import 'package:maps_testing/pages/widgets/poi_list_item_widget.dart';
@@ -70,8 +71,27 @@ Future<void> _loadMapStyles() async {
     northeast: const LatLng(47.9600, 20.4500),
   );
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
+
+    final locationProvider = context.read<LocationProvider>();
+    
+    if (locationProvider.userPosition == null) {
+      await locationProvider.loadUserPosition();
+    }
+
+    final userPos = locationProvider.userPosition;
+    
+    if (userPos != null) {
+      controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(userPos.latitude, userPos.longitude),
+            zoom: 15.0,
+          ),
+        ),
+      );
+    }
   }
 
   void _onCameraMove(CameraPosition position) {
@@ -110,6 +130,31 @@ Future<void> _loadMapStyles() async {
     );
   }
 
+  Future<void> _goToMyLocation() async {
+    final locationProvider = context.read<LocationProvider>();
+    
+    await locationProvider.loadUserPosition();
+
+    final userPos = locationProvider.userPosition;
+    
+    if (userPos != null) {
+      final controller = await _controller.future;
+      controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(userPos.latitude, userPos.longitude)
+          ),
+        ),
+      );
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Nem sikerült meghatározni a helyzeted. Ellenőrizd a GPS-t!')),
+        );
+      }
+    }
+  }
+
   BitmapDescriptor _getCustomMarkerForPoi(Poi poi) {
     const fallbackMarker = BitmapDescriptor.defaultMarker;
 
@@ -127,8 +172,19 @@ Future<void> _loadMapStyles() async {
   @override
   Widget build(BuildContext context) {
     final poiProvider = context.watch<PoiProvider>();
+    final locationProvider = context.watch<LocationProvider>();
 
     final currentMapStyle = Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle;
+
+    final startingCameraPos = locationProvider.userPosition != null
+        ? CameraPosition(
+            target: LatLng(
+              locationProvider.userPosition!.latitude,
+              locationProvider.userPosition!.longitude,
+            ),
+            zoom: 15.0,
+          )
+        : _currentCameraPos;
 
     return Stack(
       children: [
@@ -137,13 +193,14 @@ Future<void> _loadMapStyles() async {
           onMapCreated: _onMapCreated,
           onCameraMove: _onCameraMove,
           onCameraIdle: _onCameraIdle,
-          initialCameraPosition: _currentCameraPos,
+          initialCameraPosition: startingCameraPos,
           style: currentMapStyle,
           //cameraTargetBounds: CameraTargetBounds(_egerBounds),
           cameraTargetBounds:
               CameraTargetBounds.unbounded, // ideiglenes, tesztelésre csak
           minMaxZoomPreference: const MinMaxZoomPreference(12.5, null),
-          myLocationButtonEnabled: true,
+          myLocationButtonEnabled: false,
+          myLocationEnabled: true,
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
           compassEnabled: false,
@@ -215,6 +272,21 @@ Future<void> _loadMapStyles() async {
           child: _selectedPoi != null
               ? PoiListItem(poi: _selectedPoi!)
               : const SizedBox(),
+        ),
+
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          right: 16,
+          bottom: _selectedPoi != null ? 140 : 32, 
+          child: FloatingActionButton(
+            heroTag: 'myLocationBtn',
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
+            elevation: 4,
+            onPressed: _goToMyLocation,
+            child: const Icon(Icons.my_location),
+          ),
         ),
 
         if (poiProvider.isLoading) Center(child: CircularProgressIndicator()),
