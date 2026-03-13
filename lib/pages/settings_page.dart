@@ -14,6 +14,7 @@ class SettingsPage extends StatelessWidget {
       Colors.red[700]!,
       Colors.orange[700]!,
     ];
+
     return Scaffold(
       appBar: AppBar(title: const Text('Beállítások'), centerTitle: true),
       body: Consumer<ThemeProvider>(
@@ -38,9 +39,9 @@ class SettingsPage extends StatelessWidget {
                 onChanged: (value) => themeProvider.toggleTheme(value),
               ),
 
-              const Divider(),
+              const Divider(indent: 16, endIndent: 16),
 
-              const ListTile(title: Text('Kiemelő szín (Accent Color)')),              
+              const ListTile(title: Text('Kiemelő szín')),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
@@ -49,7 +50,9 @@ class SettingsPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: colorOptions.map((color) {
-                    final isSelected = themeProvider.accentColor.toARGB32() == color.toARGB32();
+                    final isSelected =
+                        themeProvider.accentColor.toARGB32() ==
+                        color.toARGB32();
                     return GestureDetector(
                       onTap: () => themeProvider.setAccentColor(color),
                       child: Container(

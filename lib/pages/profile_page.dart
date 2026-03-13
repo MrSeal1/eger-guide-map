@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:maps_testing/logic/services/auth_service.dart';
 import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/favorites_page.dart';
+import 'package:maps_testing/pages/info_page.dart';
 import 'package:maps_testing/pages/reviews_page.dart';
 import 'package:maps_testing/pages/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -13,9 +14,7 @@ class ProfilePageWidget extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(mainAxisSize: MainAxisSize.min, children: children),
@@ -240,7 +239,10 @@ class ProfilePageWidget extends StatelessWidget {
                   icon: Icons.info_outline,
                   title: 'Az alkalmazásról',
                   onTap: () {
-                    // TODO: Info oldal
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const InfoPage()),
+                    );
                   },
                 ),
               ]),
