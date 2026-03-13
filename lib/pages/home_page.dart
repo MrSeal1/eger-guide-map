@@ -38,24 +38,23 @@ class _HomePageState extends State<HomePage> {
         builder: (context, userData, child) {
           final routeCount = userData.plannedRoute.length;
 
-          return BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            // fixed type, mert 4 tagtól kezdve shifting automatikusan
-            type: BottomNavigationBarType.fixed,
-            onTap: (index) {
+          return NavigationBar(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: (index) {
               setState(() {
                 _selectedIndex = index;
               });
             },
-            items: [
-              const BottomNavigationBarItem(
+            destinations: [
+              const NavigationDestination(
                 icon: Icon(Icons.person),
                 label: "Profil",
               ),
 
-              BottomNavigationBarItem(
+              NavigationDestination(
                 icon: Badge(
                   isLabelVisible: routeCount > 0,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   label: Text(
                     routeCount.toString(),
                     style: const TextStyle(
@@ -68,12 +67,12 @@ class _HomePageState extends State<HomePage> {
                 label: "Útvonal",
               ),
 
-              const BottomNavigationBarItem(
+              const NavigationDestination(
                 icon: Icon(Icons.map_outlined),
                 label: "Térkép",
               ),
               
-              const BottomNavigationBarItem(
+              const NavigationDestination(
                 icon: Icon(Icons.list_rounded),
                 label: "Lista",
               ),
