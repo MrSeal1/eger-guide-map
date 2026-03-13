@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_testing/data/models/poi.dart';
+import 'package:maps_testing/pages/widgets/custom_marker_widget.dart';
 import 'package:maps_testing/pages/widgets/filter_widget.dart';
 import 'package:maps_testing/pages/widgets/poi_list_item_widget.dart';
 import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -23,9 +25,10 @@ class _MapPageState extends State<MapPage> {
   String? _darkMapStyle;
 
   bool _showSearchButton = true;
-  LatLng? _lastSearchedPos;
 
   Poi? _selectedPoi;
+
+  final Map<String, BitmapDescriptor> _customMarkers = {};
 
   // alapból Eger koordinátái, tesztelés miatt
   CameraPosition _currentCameraPos = const CameraPosition(
@@ -37,7 +40,7 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _loadMapStyles();
-    _lastSearchedPos = _center;
+    _generateCustomMarkers();
   }
 
 Future<void> _loadMapStyles() async {
@@ -49,6 +52,16 @@ Future<void> _loadMapStyles() async {
     } catch (err) {
       debugPrint('Hiba a stílus beolvasásakor: $err');
     }
+  }
+  
+  Future<void> _generateCustomMarkers() async {
+    _customMarkers['museum'] = await const CustomMarkerWidget(icon: Icons.museum, backgroundColor: Colors.purple).toBitmapDescriptor();
+    _customMarkers['shopping'] = await const CustomMarkerWidget(icon: Icons.shopping_bag, backgroundColor: Colors.blue).toBitmapDescriptor();
+    _customMarkers['restaurant'] = await const CustomMarkerWidget(icon: Icons.restaurant, backgroundColor: Colors.orange).toBitmapDescriptor();
+    _customMarkers['park'] = await const CustomMarkerWidget(icon: Icons.park, backgroundColor: Colors.green).toBitmapDescriptor();
+    _customMarkers['attraction'] = await const CustomMarkerWidget(icon: Icons.camera_alt, backgroundColor: Colors.red).toBitmapDescriptor();
+    
+    if (mounted) setState(() {});
   }
 
   static const LatLng _center = LatLng(47.9025, 20.3772);
@@ -89,7 +102,6 @@ Future<void> _loadMapStyles() async {
     );
 
     final searchTarget = _currentCameraPos.target;
-    _lastSearchedPos = searchTarget;
 
     context.read<PoiProvider>().loadPois(
       lat: searchTarget.latitude,
@@ -98,16 +110,18 @@ Future<void> _loadMapStyles() async {
     );
   }
 
-  // kategóriától függően más-más színt ad vissza
-  double _getMarkerColor(List<String>? types) {
-    if (types == null || types.isEmpty) return BitmapDescriptor.hueRed;
+  BitmapDescriptor _getCustomMarkerForPoi(Poi poi) {
+    const fallbackMarker = BitmapDescriptor.defaultMarker;
+
+    final types = poi.types;
+    if (types == null || types.isEmpty) return _customMarkers['attraction'] ?? fallbackMarker;
     
-    if (types.any((t) => PoiProvider.categoryMapping['museum']!.contains(t))) return BitmapDescriptor.hueMagenta;
-    if (types.any((t) => PoiProvider.categoryMapping['shopping']!.contains(t))) return BitmapDescriptor.hueBlue;
-    if (types.any((t) => PoiProvider.categoryMapping['restaurant']!.contains(t))) return BitmapDescriptor.hueYellow;
-    if (types.any((t) => PoiProvider.categoryMapping['park']!.contains(t))) return BitmapDescriptor.hueGreen;
+    if (types.any((t) => PoiProvider.categoryMapping['museum']!.contains(t))) return _customMarkers['museum'] ?? fallbackMarker;
+    if (types.any((t) => PoiProvider.categoryMapping['shopping']!.contains(t))) return _customMarkers['shopping'] ?? fallbackMarker;
+    if (types.any((t) => PoiProvider.categoryMapping['restaurant']!.contains(t))) return _customMarkers['restaurant'] ?? fallbackMarker;
+    if (types.any((t) => PoiProvider.categoryMapping['park']!.contains(t))) return _customMarkers['park'] ?? fallbackMarker;
     
-    return BitmapDescriptor.hueRed; 
+    return _customMarkers['attraction'] ?? fallbackMarker;
   }
 
   @override
@@ -137,14 +151,10 @@ Future<void> _loadMapStyles() async {
             _selectedPoi = null;
           }),
           markers: poiProvider.filteredPois.map((poi) {
-            // TODO: egyedi marker widget használata, hogy
-            // flexibilisebb legyen a méret, ikon, színezés
             return Marker(
               markerId: MarkerId(poi.placeId),
               position: LatLng(poi.lat, poi.lng),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                _getMarkerColor(poi.types),
-              ),
+              icon: _getCustomMarkerForPoi(poi),
               onTap: () {
                 setState(() {
                   _selectedPoi = poi;
