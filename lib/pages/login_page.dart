@@ -57,6 +57,25 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _submitGoogle() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final credential = await _authService.signInWithGoogle();
+
+      if (credential != null && mounted) {
+        await context.read<UserDataProvider>().loadDataFromDb();
+      } else if (credential == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
+    } catch (e) {
+      _showError('Hiba a Google bejelentkezéskor!');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -71,8 +90,9 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(Icons.map_outlined, size: 80, color: colorSceme.primary),
+                Icon(Icons.map_outlined, size: 80, color: colorSceme.primary),                
                 const SizedBox(height: 24),
+
                 Text(
                   _isLoginMode ? 'Üdvözlünk!' : 'Fiók létrehozása',
                   style: const TextStyle(
@@ -80,8 +100,9 @@ class _LoginPageState extends State<LoginPage> {
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
-                ),
+                ),                
                 const SizedBox(height: 32),
+
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -92,6 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
+
                 TextField(
                   controller: _passwordController,
                   obscureText: true,
@@ -102,6 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
                 if (_isLoading)
                   const Center(child: CircularProgressIndicator())
                 else
@@ -119,6 +142,43 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 const SizedBox(height: 16),
+
+                if (!_isLoading) ...[
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'vagy',
+                          style: TextStyle(color: theme.hintColor),
+                        ),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  OutlinedButton.icon(
+                    onPressed: _submitGoogle,
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(color: colorSceme.outline.withAlpha(25)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30), 
+                      ),
+                    ),
+                    icon: Icon(Icons.account_circle, size: 24, color: colorSceme.primary),
+                    label: const Text(
+                      'Folytatás Google fiókkal',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+                
                 TextButton(
                   onPressed: () {
                     setState(() {
