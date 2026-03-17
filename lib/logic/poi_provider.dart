@@ -30,7 +30,7 @@ class PoiProvider extends ChangeNotifier {
     final allowedTypes = categoryMapping[_selectedCategory] ?? [];
 
     return _allPois.where((poi) {
-      if(poi.types == null) return false;
+      if (poi.types == null) return false;
       return poi.types!.any((type) => allowedTypes.contains(type));
     }).toList();
   }
@@ -38,11 +38,10 @@ class PoiProvider extends ChangeNotifier {
   PoiProvider(this._repository);
 
   Poi? getPoiById(String id) {
-    try {
-      return _allPois.firstWhere((p) => p.placeId == id);
-    } catch (_) {
-      return null;
+    for (var p in _allPois) {
+      if (p.placeId == id) return p;
     }
+    return null;
   }
 
   Future<void> loadPois({double? lat, double? lng, int radius = 2000}) async {
@@ -52,7 +51,9 @@ class PoiProvider extends ChangeNotifier {
     final targetLat = lat ?? 47.9025;
     final targetLng = lng ?? 20.3772;
 
-    final targetedTypes = categoryMapping.values.expand((types) => types).toList();
+    final targetedTypes = categoryMapping.values
+        .expand((types) => types)
+        .toList();
 
     try {
       _allPois = await _repository.getPois(

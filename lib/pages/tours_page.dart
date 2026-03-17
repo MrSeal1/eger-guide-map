@@ -149,8 +149,7 @@ class _ToursPageState extends State<ToursPage> {
             context.read<TourProvider>().loadTours();
           }
         },
-        icon: const Icon(Icons.upload),
-        label: const Text('Tesztadatok feltöltése'),
+        label: Icon(Icons.refresh)
       ),
     );
   }
