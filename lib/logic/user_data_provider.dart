@@ -73,4 +73,9 @@ class UserDataProvider extends ChangeNotifier {
     _firestoreService.saveRoute(_plannedRoute);
     notifyListeners();
   }
+
+  void clearRoute() {
+    _plannedRoute.clear();
+    notifyListeners();
+  }
 }

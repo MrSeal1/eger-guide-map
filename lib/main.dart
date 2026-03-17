@@ -3,6 +3,7 @@ import 'package:maps_testing/data/repositories/google_places_repository.dart';
 import 'package:maps_testing/firebase_options.dart';
 import 'package:maps_testing/logic/location_provider.dart';
 import 'package:maps_testing/logic/theme_provider.dart';
+import 'package:maps_testing/logic/tour_provider.dart';
 import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LocationProvider()),
         ChangeNotifierProvider(create: (_) => UserDataProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => TourProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

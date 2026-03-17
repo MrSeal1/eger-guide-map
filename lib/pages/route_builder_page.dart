@@ -1,11 +1,112 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/data/models/poi.dart';
+import 'package:maps_testing/logic/tour_provider.dart';
 import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RouteBuilderPage extends StatelessWidget {
   const RouteBuilderPage({super.key});
+
+  void _showPublishTourDialog(BuildContext context, List<Poi> currentRoute) {
+    final titleController = TextEditingController();
+    final descController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        bool isSubmitting = false;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Megosztás túraként'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Oszd meg a kedvenc útvonalad a közösséggel!'),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'Túra neve',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: descController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        labelText: 'Rövid leírás',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Mégse'),
+                ),
+                FilledButton(
+                  onPressed: isSubmitting
+                      ? null
+                      : () async {
+                          if (titleController.text.isEmpty ||
+                              descController.text.isEmpty) {
+                            return;
+                          }
+                          setState(() => isSubmitting = true);
+
+                          final creatorName = context.read<UserDataProvider>().userEmail.split('@')[0];
+
+                          final List<String> poiIds = currentRoute
+                              .map((p) => p.placeId)
+                              .toList();
+
+                          final success = await context
+                              .read<TourProvider>()
+                              .addTour(
+                                title: titleController.text.trim(),
+                                description: descController.text.trim(),
+                                creatorName: creatorName,
+                                poiIds: poiIds,
+                              );
+
+                          setState(() => isSubmitting = false);
+
+                          if (success && context.mounted) {
+                            Navigator.pop(dialogContext);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Sikeresen megosztottad a túrát!',
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                  child: isSubmitting
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Közzététel'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   Future<void> _launchMultiStopRoute(
     BuildContext context,
@@ -62,7 +163,23 @@ class RouteBuilderPage extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Útiterv építő'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Útiterv építő'),
+        centerTitle: true,
+        actions: [
+          Consumer<UserDataProvider>(
+            builder: (context, userData, child) {
+              if (userData.plannedRoute.isEmpty) return const SizedBox.shrink();
+              return IconButton(
+                icon: const Icon(Icons.share),
+                tooltip: 'Megosztás publikus túraként',
+                onPressed: () =>
+                    _showPublishTourDialog(context, userData.plannedRoute),
+              );
+            },
+          ),
+        ],
+      ),
       body: Consumer<UserDataProvider>(
         builder: (context, userData, child) {
           final route = userData.plannedRoute;
@@ -119,7 +236,6 @@ class RouteBuilderPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final poi = route[index];
                     return ListTile(
-                      // A ReorderableListView-nak kötelező egyedi kulcsot adni minden elemhez
                       key: ValueKey(poi.placeId),
 
                       leading: CircleAvatar(

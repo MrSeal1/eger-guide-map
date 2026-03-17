@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_testing/data/models/poi.dart';
 import 'package:maps_testing/logic/location_provider.dart';
+import 'package:maps_testing/logic/tour_provider.dart';
+import 'package:maps_testing/pages/tours_page.dart';
 import 'package:maps_testing/pages/widgets/custom_marker_widget.dart';
 import 'package:maps_testing/pages/widgets/filter_widget.dart';
 import 'package:maps_testing/pages/widgets/poi_list_item_widget.dart';
@@ -173,6 +175,13 @@ Future<void> _loadMapStyles() async {
   Widget build(BuildContext context) {
     final poiProvider = context.watch<PoiProvider>();
     final locationProvider = context.watch<LocationProvider>();
+    final tourProvider = context.watch<TourProvider>();
+
+    final activeTour = tourProvider.activeTour;
+
+    final displayPois = activeTour != null
+        ? poiProvider.filteredPois.where((poi) => activeTour.poiIds.contains(poi.placeId)).toList()
+        : poiProvider.filteredPois;
 
     final currentMapStyle = Theme.of(context).brightness == Brightness.dark ? _darkMapStyle : _lightMapStyle;
 
@@ -207,7 +216,7 @@ Future<void> _loadMapStyles() async {
           onTap: (_) => setState(() {
             _selectedPoi = null;
           }),
-          markers: poiProvider.filteredPois.map((poi) {
+          markers: displayPois.map((poi) {
             return Marker(
               markerId: MarkerId(poi.placeId),
               position: LatLng(poi.lat, poi.lng),
@@ -216,6 +225,7 @@ Future<void> _loadMapStyles() async {
                 setState(() {
                   _selectedPoi = poi;
                 });
+                debugPrint("HELY ID: ${poi.placeId}");
               },
             );
           }).toSet(),
@@ -263,6 +273,43 @@ Future<void> _loadMapStyles() async {
             ),
           ),
 
+          if (activeTour != null)
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 120), // Igazítsd a kereső gombodhoz mérten
+                child: Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(30),
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.route, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Túra: ${activeTour.title}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            // Túra mód kikapcsolása
+                            context.read<TourProvider>().setActiveTour(null);
+                          },
+                          child: const Icon(Icons.close, size: 20),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -286,6 +333,34 @@ Future<void> _loadMapStyles() async {
             elevation: 4,
             onPressed: _goToMyLocation,
             child: const Icon(Icons.my_location),
+          ),
+        ),
+
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          right: 16,
+          // Ha van kiválasztva POI, kicsit feljebb toljuk, hogy ne takarja ki a kártyát
+          bottom: _selectedPoi != null ? 210 : 100, 
+          child: FloatingActionButton.extended(
+            heroTag: 'toursPageBtn', // Fontos, hogy egyedi heroTag legyen!
+            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+            foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
+            elevation: 4,
+            onPressed: () {
+              // Átnavigálás a Túrák oldalra
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ToursPage(), // Fontos az import a fájl tetején!
+                ),
+              );
+            },
+            icon: const Icon(Icons.route),
+            label: const Text(
+              'Túrák',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ),
 
