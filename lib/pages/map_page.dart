@@ -297,7 +297,6 @@ Future<void> _loadMapStyles() async {
                         const SizedBox(width: 8),
                         InkWell(
                           onTap: () {
-                            // Túra mód kikapcsolása
                             context.read<TourProvider>().setActiveTour(null);
                           },
                           child: const Icon(Icons.close, size: 20),
@@ -350,7 +349,7 @@ Future<void> _loadMapStyles() async {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ToursPage(), 
+                  builder: (context) => const ToursPage(),
                 ),
               );
             },
