@@ -278,7 +278,7 @@ Future<void> _loadMapStyles() async {
             child: Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: 120), // Igazítsd a kereső gombodhoz mérten
+                padding: const EdgeInsets.only(top: 120),
                 child: Material(
                   elevation: 6,
                   borderRadius: BorderRadius.circular(30),
@@ -340,19 +340,17 @@ Future<void> _loadMapStyles() async {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           right: 16,
-          // Ha van kiválasztva POI, kicsit feljebb toljuk, hogy ne takarja ki a kártyát
           bottom: _selectedPoi != null ? 210 : 100, 
           child: FloatingActionButton.extended(
-            heroTag: 'toursPageBtn', // Fontos, hogy egyedi heroTag legyen!
+            heroTag: 'toursPageBtn',
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             foregroundColor: Theme.of(context).colorScheme.onSecondaryContainer,
             elevation: 4,
             onPressed: () {
-              // Átnavigálás a Túrák oldalra
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ToursPage(), // Fontos az import a fájl tetején!
+                  builder: (context) => const ToursPage(), 
                 ),
               );
             },
