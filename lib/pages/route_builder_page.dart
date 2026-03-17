@@ -60,8 +60,9 @@ class RouteBuilderPage extends StatelessWidget {
                             return;
                           }
                           setState(() => isSubmitting = true);
-
-                          final creatorName = context.read<UserDataProvider>().userEmail.split('@')[0];
+                          final userDataProvider = context.read<UserDataProvider>();
+                          final creatorName = userDataProvider.userEmail.split('@')[0];
+                          final creatorId = userDataProvider.userId;
 
                           final List<String> poiIds = currentRoute
                               .map((p) => p.placeId)
@@ -73,6 +74,7 @@ class RouteBuilderPage extends StatelessWidget {
                                 title: titleController.text.trim(),
                                 description: descController.text.trim(),
                                 creatorName: creatorName,
+                                creatorId: creatorId,
                                 poiIds: poiIds,
                               );
 

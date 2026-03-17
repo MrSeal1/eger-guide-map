@@ -5,6 +5,7 @@ class Tour {
   final String title;
   final String description;
   final String creatorName;
+  final String creatorId;
   final bool isOfficial;
   final List<String> poiIds;
   final DateTime createdAt;
@@ -14,6 +15,7 @@ class Tour {
     required this.title,
     required this.description,
     required this.creatorName,
+    required this.creatorId,
     required this.isOfficial,
     required this.poiIds,
     required this.createdAt,
@@ -26,6 +28,7 @@ class Tour {
       title: data['title'] ?? '',
       description: data['description'] ?? '',
       creatorName: data['creatorName'] ?? 'Ismeretlen felhasználó',
+      creatorId: data['creatorId'] ?? 'ismeretlen',
       isOfficial: data['isOfficial'] ?? false,
       poiIds: List<String>.from(data['poiIds'] ?? []),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -37,6 +40,7 @@ class Tour {
       'title': title,
       'description': description,
       'creatorName': creatorName,
+      'creatorId': creatorId,
       'isOfficial': isOfficial,
       'poiIds': poiIds,
       'createdAt': FieldValue.serverTimestamp(),

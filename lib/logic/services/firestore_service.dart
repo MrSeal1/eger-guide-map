@@ -92,8 +92,9 @@ class FirestoreService {
 
     try {
       final userEmail = auth.currentUser?.email ?? 'Ismeretlen';
+      final uniqueDocId = '${placeId}_$_userId';
 
-      await db.collection('reviews').add({
+      await db.collection('reviews').doc(uniqueDocId).set({
         'placeId': placeId,
         'placeName': placeName,
         'userId': _userId,

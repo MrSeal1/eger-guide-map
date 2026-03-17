@@ -42,6 +42,7 @@ class TourProvider with ChangeNotifier {
     required String title,
     required String description,
     required String creatorName,
+    required String creatorId,
     required List<String> poiIds,
   }) async {
     try {
@@ -50,6 +51,7 @@ class TourProvider with ChangeNotifier {
         title: title,
         description: description,
         creatorName: creatorName,
+        creatorId: creatorId,
         isOfficial: false,
         poiIds: poiIds,
         createdAt: DateTime.now(),
