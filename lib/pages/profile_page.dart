@@ -3,6 +3,7 @@ import 'package:maps_testing/logic/services/auth_service.dart';
 import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:maps_testing/pages/favorites_page.dart';
 import 'package:maps_testing/pages/info_page.dart';
+import 'package:maps_testing/pages/my_tours_page.dart';
 import 'package:maps_testing/pages/reviews_page.dart';
 import 'package:maps_testing/pages/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,9 @@ class ProfilePageWidget extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: (iconColor ?? Theme.of(context).colorScheme.primary).withAlpha(25),
+          color: (iconColor ?? Theme.of(context).colorScheme.primary).withAlpha(
+            25,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
@@ -199,6 +202,25 @@ class ProfilePageWidget extends StatelessWidget {
                     );
                   },
                 ),
+                Divider(
+                  height: 1,
+                  indent: 20,
+                  endIndent: 20,
+                  color: dividerColor,
+                ),
+                _buildProfileItem(
+                  context,
+                  icon: Icons.route,
+                  title: 'Saját túráim',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyToursPage(),
+                      ),
+                    );
+                  },
+                ),
               ]),
 
               // 2. beállítások és infó
@@ -215,18 +237,6 @@ class ProfilePageWidget extends StatelessWidget {
                       ),
                     );
                   },
-                ),
-                Divider(
-                  height: 1,
-                  indent: 20,
-                  endIndent: 20,
-                  color: dividerColor,
-                ),
-                _buildProfileItem(
-                  context,
-                  icon: Icons.download,
-                  title: 'Helyi adatok letöltése',
-                  onTap: () {},
                 ),
                 Divider(
                   height: 1,

@@ -66,4 +66,33 @@ class TourProvider with ChangeNotifier {
       return false;
     }
   }
+
+  Future<List<Tour>> getUserTours(String userId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('tours')
+          .where('creatorId', isEqualTo: userId)
+          .get();
+
+      final myTours = snapshot.docs.map((doc) => Tour.fromFirestore(doc)).toList();
+      myTours.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      
+      return myTours;
+
+    } catch (e) {
+      debugPrint('Hiba a saját túrák lekérésekor: $e');
+      return [];
+    }
+  }
+
+  Future<bool> deleteTour(String tourId) async {
+    try {
+      await _firestore.collection('tours').doc(tourId).delete();
+      await loadTours();
+      return true;
+    } catch (e) {
+      debugPrint('Hiba a túra törlésekor: $e');
+      return false;
+    }
+  }
 }
