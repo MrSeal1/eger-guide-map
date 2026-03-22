@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maps_testing/data/models/tour.dart';
+import 'package:maps_testing/logic/poi_provider.dart';
 import 'package:maps_testing/logic/tour_provider.dart';
 import 'package:maps_testing/logic/user_data_provider.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,8 @@ class _MyToursPageState extends State<MyToursPage> {
 
   @override
   Widget build(BuildContext context) {
+    final poiProvider = context.watch<PoiProvider>();
+    final userDataProvider = context.watch<UserDataProvider>();
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -114,6 +117,26 @@ class _MyToursPageState extends State<MyToursPage> {
                       }
                     },
                   ),
+                  onTap: () {
+                      final tourPois = poiProvider.filteredPois
+                          .where((poi) => tour.poiIds.contains(poi.placeId))
+                          .toList();
+
+                      userDataProvider.clearRoute();
+
+                      for (var poi in tourPois) {
+                        userDataProvider.addToRoute(poi);
+                      }
+
+                      context.read<TourProvider>().setActiveTour(tour);
+                      Navigator.pop(context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${tour.title} betöltve a térképre!'),
+                        ),
+                      );
+                    },
                 ),
               );
             },

@@ -271,13 +271,15 @@ class PoiDetailsPage extends StatelessWidget {
                                   mode: LaunchMode.externalApplication,
                                 );
                               } catch (_) {
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                if(context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
                                       "Nem sikerült megnyitni a weboldalt.",
                                     ),
                                   ),
                                 );
+                                }
                               }
                             },
                           ),
@@ -318,13 +320,15 @@ class PoiDetailsPage extends StatelessWidget {
                               if (await canLaunchUrl(googleMapsUrl)) {
                                 await launchUrl(googleMapsUrl);
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                if(context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
                                       "Nem sikerült megnyitni a térképet.",
                                     ),
                                   ),
                                 );
+                                }
                               }
                             },
                             icon: const Icon(Icons.directions),

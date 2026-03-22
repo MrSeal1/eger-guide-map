@@ -113,7 +113,9 @@ class ProfilePageWidget extends StatelessWidget {
                     );
                   }
                 }
-                Navigator.of(dialogContext).pop();
+                if(context.mounted) {
+                  Navigator.of(dialogContext).pop();
+                }
               },
               child: const Text('Igen, törlöm'),
             ),

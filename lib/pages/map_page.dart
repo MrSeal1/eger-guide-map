@@ -125,11 +125,13 @@ Future<void> _loadMapStyles() async {
 
     final searchTarget = _currentCameraPos.target;
 
-    context.read<PoiProvider>().loadPois(
+    if(mounted) {
+      context.read<PoiProvider>().loadPois(
       lat: searchTarget.latitude,
       lng: searchTarget.longitude,
       radius: radius.toInt(),
     );
+    }
   }
 
   Future<void> _goToMyLocation() async {
