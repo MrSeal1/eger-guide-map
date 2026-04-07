@@ -112,7 +112,6 @@ Future<void> _loadMapStyles() async {
     });
 
     final controller = await _controller.future;
-
     final screenBounds = await controller.getVisibleRegion();
     final center = _currentCameraPos.target;
 
@@ -123,12 +122,10 @@ Future<void> _loadMapStyles() async {
       screenBounds.northeast.longitude,
     );
 
-    final searchTarget = _currentCameraPos.target;
-
     if(mounted) {
       context.read<PoiProvider>().loadPois(
-      lat: searchTarget.latitude,
-      lng: searchTarget.longitude,
+      lat: center.latitude,
+      lng: center.longitude,
       radius: radius.toInt(),
     );
     }
@@ -325,8 +322,8 @@ Future<void> _loadMapStyles() async {
         AnimatedPositioned(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          right: 16,
-          bottom: _selectedPoi != null ? 140 : 32, 
+          left: 16,
+          bottom: _selectedPoi != null ? 150 : 32, 
           child: FloatingActionButton(
             heroTag: 'myLocationBtn',
             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -341,7 +338,7 @@ Future<void> _loadMapStyles() async {
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           right: 16,
-          bottom: _selectedPoi != null ? 210 : 100, 
+          bottom: _selectedPoi != null ? 150 : 32, 
           child: FloatingActionButton.extended(
             heroTag: 'toursPageBtn',
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
