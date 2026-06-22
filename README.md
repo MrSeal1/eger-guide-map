@@ -7,6 +7,12 @@ This repo is for my thesis that I made during my studies at Eszterházy Károly 
 * **Road planner** Personalized roadtrip composition and multi-point navigation via Google Maps
 * **Community features** Ratings and public roadtrip submissions
 
+<p align="center">
+  <img src="./screenshots/poi_list.jpg" width="320" />
+  <img src="./screenshots/poi_details.jpg" width="320" />
+  <img src="./screenshots/map_poi_clicked2.jpg" width="320" />
+</p>
+
 ## Useg technologies
 * **Client:** Flutter (Dart)
 * **Backend:** Firebase (Authentication, Firestore)
